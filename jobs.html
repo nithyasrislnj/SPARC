@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPARC — Smart Poverty Assistance & Resource Coordination</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link href="style.css" rel="stylesheet">
+  
+</head>
+
+<body class="bg-background text-textmain">
+<div id="homePage">
+  <!-- NAVBAR -->
+  <header>
+    <div class="container navbar">
+
+      <div class="logo-area" onclick="toggleProfileMenu()">
+        <div class="logo-circle">
+          S
+        </div>
+        <h1 class="logo-title">SPARC</h1>
+      </div>
+
+      <nav>
+        <a href="home.html">Home</a>
+        <a href="#about">About</a>
+        <a href="#" onclick="openDashboard()">Dashboard</a>
+        <a href="food-donation.html">Food</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="beneficiary.html">Beneficiaries</a>
+        <a href="impact.html">Impact</a>
+      </nav>
+
+      <button class="primary-btn" onclick="openLogin()">
+        Login
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- Profile Dropdown -->
+  <div id="profileMenu" class="profile-menu">
+    <p id="profileName"></p>
+    <p id="profileRole"></p>
+    <p id="profileEmail"></p>
+    <p id="profileStatus"></p>
+    <hr>
+    <p onclick="openDashboard()">
+      📊 Dashboard
+    </p>
+
+    <p onclick="openNotifications()">
+      🔔 Notifications
+    </p>
+
+    <p onclick="openActivity()">
+      📈 Activity
+    </p>
+
+    <p  onclick="openSettings()">
+      ⚙ Settings
+    </p>
+    <hr>
+    <p onclick="logout()">
+      🚪 Logout
+    </p>
+  </div>
+
+  <!-- NOTIFICATION POPUP -->
+  <div id="notifModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>🔔 Notifications</h3>
+      <div id="notifList">
+        Loading...
+      </div>
+      <button onclick="closeNotif()">← Back</button>
+    </div>
+  </div>
+
+  <!-- ACTIVITY POPUP -->
+  <div id="activityModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>📈 Activity</h3>
+      <div id="activityList">
+        Loading...
+      </div>
+      <button onclick="closeActivity()">← Back</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS POPUP -->
+  <div id="settingsModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>⚙ Settings</h3>
+      <p onclick="showEditProfile()">Edit Profile</p>
+      <p>Change Password</p>
+      <p>Dark Mode</p>
+      <button onclick="closeSettings()">← Back</button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="popup-modal">
+    <div class="popup-box">
+
+      <h3>Edit Profile</h3>
+      <input id="editName" placeholder="Name">
+      <input id="editEmail" placeholder="Email">
+
+      <br><br>
+
+      <button onclick="saveProfile()"> Save </button>
+      <button onclick="closeEditProfile()"> Cancel </button>
+
+    </div>
+  </div>
+
+  <div id="sidePanel" class="side-panel">
+    <div class="side-header">
+        <span id="panelTitle">Panel</span>
+        <button onclick="closePanel()">
+            ✕
+        </button>
+    </div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+
+<div id="mainContent">
+  <!-- JOB SECTION -->
+  <section id="jobs" class="section-padding white-section">
+    <div class="container">
+
+      <div class="text-center section-margin">
+        <h2 class="section-title">Micro-Job Marketplace</h2>
+        <p class="section-subtitle">
+          Employers can post short-term work opportunities for communities.
+        </p>
+      </div>
+
+      <div class="jobs-grid">
+
+        <div class="job-card card-hover">
+          <span class="material-symbols-outlined">construction</span>
+          <h3>Construction Cleanup</h3>
+          <p>4 Hours • ₹800 • Vijayawada</p>
+          <button class="primary-btn" style="margin-top:24px;"
+          onclick="openJobModal(1)">Apply</button>
+        </div>
+
+        <div class="job-card card-hover">
+          <span class="material-symbols-outlined">cleaning_services</span>
+          <h3>Community Cleaning</h3>
+          <p>1 Day • ₹1000 • Tirupati</p>
+          <button class="primary-btn" style="margin-top:24px;"
+          onclick="openJobModal(2)">Apply</button>
+        </div>
+
+        <div class="job-card card-hover">
+          <span class="material-symbols-outlined">local_shipping</span>
+          <h3>Food Delivery</h3>
+          <p>Flexible • ₹600 • Local Area</p>
+          <button class="primary-btn" style="margin-top:24px;"
+          onclick="openJobModal(3)">Apply</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Login Module -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-box">
+      <span class="close-btn" onclick="closeLogin()">
+        ✕
+      </span>
+      <h2>SPARC Login</h2>
+
+      <form id="loginForm">
+        <label>Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter Email"
+          required
+        >
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter Password"
+          required
+        >
+
+        <label>Role</label>
+        <select id="role">
+
+          <option>Volunteer</option>
+          <option>NGO</option>
+          <option>Donor</option>
+          <option>Employer</option>
+          <option>Admin</option>
+
+        </select>
+
+        <button
+          type="submit"
+          class="primary-btn login-btn">
+          Login
+        </button>
+
+        <!-- <button
+          type="button"
+          class="outline-btn login-btn"
+          onclick="openRegister()"
+          style="margin-top:10px;">
+          Create Account
+        </button> -->
+
+        <p style="text-align:center;margin-top:15px;">
+          Don't have an account?
+          <a href="#" onclick="openRegister()">
+            Create Account
+          </a>
+        </p>
+
+      </form>
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <!-- Registration -->
+  <div class="login-modal" id="registerModal">
+    <div class="login-box">
+      <span
+        class="close-btn"
+        onclick="closeRegister()">
+        ✕
+      </span>
+
+      <h2>SPARC Register</h2>
+      <form id="registerForm">
+        <label>Name</label>
+        <input
+          type="text"
+          id="regName"
+          placeholder="Enter Name"
+          required>
+
+        <label>Email</label>
+        <input
+          type="email"
+          id="regEmail"
+          placeholder="Enter Email"
+          required>
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="regPassword"
+          placeholder="Create Password"
+          required>
+
+        <label>Role</label>
+        <select id="regRole">
+          <option value="Admin">Admin</option>
+          <option value="Volunteer">Volunteer</option>
+          <option value="NGO">NGO</option>
+          <option value="Donor">Donor</option>
+          <option value="Employer">Employer</option>
+        </select>
+
+        <button
+          type="submit"
+          class="primary-btn login-btn">
+          Register
+        </button>
+        <p id="registerMessage"></p>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Job Application -->
+  <div class="login-modal" id="jobApplyModal">
+    <div class="login-box">
+        <span class="close-btn" onclick="closeJobModal()">
+          ✕
+        </span>
+
+        <h2>Apply For Job</h2>
+
+        <input type="text" id="applicantName"
+        placeholder="Full Name">
+
+        <input 
+        type="tel" 
+        id="applicantPhone"
+        placeholder="Phone Number"
+        maxlength="10"
+        pattern="[0-9]{10}"
+        required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+        <input type="text" id="applicantSkills"
+        placeholder="Skills">
+
+        <button
+        class="primary-btn login-btn" onclick="submitJobApplication()">
+          Apply Now
+        </button>
+    </div>
+  </div>
+
+  <!-- Apply Job Modal
+  <div class="login-modal" id="jobApplyModal">
+    <div class="login-box">
+        <span class="close-btn" onclick="closeJobModal()"> ✕ </span>
+
+        <h2>Apply For Job</h2>
+
+        <input type="text" id="applicantName" placeholder="Full Name">
+
+        <input type="tel" id="applicantPhone" placeholder="Phone Number">
+
+        <input type="text" id="applicantSkills" placeholder="Skills">
+
+        <button class="primary-btn login-btn"
+        onclick="submitJobApplication()">
+        Apply Now
+        </button>
+    </div>
+  </div> -->
+
+  <!-- Job Application Success Popup -->
+  <div id="jobPopup" class="success-popup">
+    <div class="success-popup-box">
+        <div class="success-popup-icon">✓</div>
+        <h2> Applied Successfully </h2>
+        <p> Your application has been submitted. </p>
+
+        <button onclick="closeJobPopup()"> OK </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="config.js"></script>
+<script src="Script.js"></script>
+<script src="jobs.js"></script>
+
+</body>
+</html>

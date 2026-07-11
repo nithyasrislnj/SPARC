@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPARC — Smart Poverty Assistance & Resource Coordination</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="bg-background text-textmain">
+<div id="homePage">
+  <!-- NAVBAR -->
+  <header>
+    <div class="container navbar">
+
+      <div class="logo-area" onclick="toggleProfileMenu()">
+        <div class="logo-circle">
+          S
+        </div>
+        <h1 class="logo-title">SPARC</h1>
+      </div>
+
+      <nav>
+        <a href="home.html">Home</a>
+        <a href="#about">About</a>
+        <a href="#" onclick="openDashboard()">Dashboard</a>
+        <a href="food-donation.html">Food</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="beneficiary.html">Beneficiaries</a>
+        <a href="impact.html">Impact</a>
+      </nav>
+
+      <button class="primary-btn" onclick="openLogin()">
+        Login
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- Profile Dropdown -->
+  <div id="profileMenu" class="profile-menu">
+    <p id="profileName"></p>
+    <p id="profileRole"></p>
+    <p id="profileEmail"></p>
+    <p id="profileStatus"></p>
+    <hr>
+    <p onclick="openDashboard()">
+      📊 Dashboard
+    </p>
+
+    <p onclick="openNotifications()">
+      🔔 Notifications
+    </p>
+
+    <p onclick="openActivity()">
+      📈 Activity
+    </p>
+
+    <p  onclick="openSettings()">
+      ⚙ Settings
+    </p>
+    <hr>
+    <p onclick="logout()">
+      🚪 Logout
+    </p>
+  </div>
+
+  <!-- NOTIFICATION POPUP -->
+  <div id="notifModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>🔔 Notifications</h3>
+      <div id="notifList">
+        Loading...
+      </div>
+      <button onclick="closeNotif()">← Back</button>
+    </div>
+  </div>
+
+  <!-- ACTIVITY POPUP -->
+  <div id="activityModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>📈 Activity</h3>
+      <div id="activityList">
+        Loading...
+      </div>
+      <button onclick="closeActivity()">← Back</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS POPUP -->
+  <div id="settingsModal" class="popup-modal">
+    <div class="popup-box">
+      <h3>⚙ Settings</h3>
+      <p onclick="showEditProfile()">Edit Profile</p>
+      <p>Change Password</p>
+      <p>Dark Mode</p>
+      <button onclick="closeSettings()">← Back</button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="popup-modal">
+    <div class="popup-box">
+
+      <h3>Edit Profile</h3>
+      <input id="editName" placeholder="Name">
+      <input id="editEmail" placeholder="Email">
+
+      <br><br>
+
+      <button onclick="saveProfile()"> Save </button>
+      <button onclick="closeEditProfile()"> Cancel </button>
+
+    </div>
+  </div>
+
+  <div id="sidePanel" class="side-panel">
+    <div class="side-header">
+        <span id="panelTitle">Panel</span>
+        <button onclick="closePanel()">
+            ✕
+        </button>
+    </div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+
+<div id="mainContent">
+  <!-- HOW SPARC WORKS -->
+  <section id="howSparcWorks" class="how-sparc-section">
+    <div class="container">
+      <div class="text-center section-margin">
+
+        <h2 class="section-title">
+          How SPARC Works
+        </h2>
+
+        <p class="section-subtitle">
+          A simple and coordinated process that connects
+          communities, resources and opportunities through
+          one unified platform.
+        </p>
+      </div>
+
+      <div class="sparc-steps">
+        <!-- STEP 1 -->
+        <div class="sparc-step-card">
+          <div class="step-number">
+            1
+          </div>
+
+          <div class="step-icon">
+            <span class="material-symbols-outlined">
+              groups
+            </span>
+          </div>
+
+          <h3>
+            Choose Your Role
+          </h3>
+
+          <p>
+            Join SPARC as a Volunteer, NGO, Donor,
+            Employer or Administrator.
+          </p>
+        </div>
+
+        <div class="step-arrow">
+          →
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="sparc-step-card">
+          <div class="step-number">
+            2
+          </div>
+
+          <div class="step-icon">
+            <span class="material-symbols-outlined">
+              volunteer_activism
+            </span>
+          </div>
+
+          <h3>
+            Take Action
+          </h3>
+
+          <p>
+            Donate food, register beneficiaries,
+            provide jobs and support communities.
+          </p>
+        </div>
+
+        <div class="step-arrow">
+          →
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="sparc-step-card">
+          <div class="step-number">
+            3
+          </div>
+
+          <div class="step-icon">
+            <span class="material-symbols-outlined">
+              hub
+            </span>
+          </div>
+
+          <h3>
+            Smart Coordination
+          </h3>
+
+          <p>
+            SPARC connects people, resources and
+            opportunities through one coordinated system.
+          </p>
+        </div>
+
+        <div class="step-arrow">
+          →
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="sparc-step-card">
+          <div class="step-number">
+            4
+          </div>
+
+          <div class="step-icon">
+            <span class="material-symbols-outlined">
+              monitoring
+            </span>
+          </div>
+
+          <h3>Track Impact</h3>
+
+          <p>
+            Monitor activities, dashboards and
+            measurable community impact.
+          </p>
+        </div>
+      </div>
+
+      <div class="sparc-get-started">
+        <button class="primary-btn" onclick="openRolePage()">
+          Get Started →
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- Login Module -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-box">
+      <span class="close-btn" onclick="closeLogin()">
+        ✕
+      </span>
+      <h2>SPARC Login</h2>
+
+      <form id="loginForm">
+        <label>Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter Email"
+          required
+        >
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter Password"
+          required
+        >
+
+        <label>Role</label>
+        <select id="role">
+
+          <option>Volunteer</option>
+          <option>NGO</option>
+          <option>Donor</option>
+          <option>Employer</option>
+          <option>Admin</option>
+
+        </select>
+
+        <button
+          type="submit"
+          class="primary-btn login-btn">
+          Login
+        </button>
+
+        <!-- <button
+          type="button"
+          class="outline-btn login-btn"
+          onclick="openRegister()"
+          style="margin-top:10px;">
+          Create Account
+        </button> -->
+
+        <p style="text-align:center;margin-top:15px;">
+          Don't have an account?
+          <a href="#" onclick="openRegister()">
+            Create Account
+          </a>
+        </p>
+
+      </form>
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <!-- Registration -->
+  <div class="login-modal" id="registerModal">
+    <div class="login-box">
+      <span
+        class="close-btn"
+        onclick="closeRegister()">
+        ✕
+      </span>
+
+      <h2>SPARC Register</h2>
+      <form id="registerForm">
+        <label>Name</label>
+        <input
+          type="text"
+          id="regName"
+          placeholder="Enter Name"
+          required>
+
+        <label>Email</label>
+        <input
+          type="email"
+          id="regEmail"
+          placeholder="Enter Email"
+          required>
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="regPassword"
+          placeholder="Create Password"
+          required>
+
+        <label>Role</label>
+        <select id="regRole">
+          <option value="Admin">Admin</option>
+          <option value="Volunteer">Volunteer</option>
+          <option value="NGO">NGO</option>
+          <option value="Donor">Donor</option>
+          <option value="Employer">Employer</option>
+        </select>
+
+        <button
+          type="submit"
+          class="primary-btn login-btn">
+          Register
+        </button>
+        <p id="registerMessage"></p>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="Script.js"></script>
+  <script src="how-sparc-works.js"></script>
+
+</body>
+</html>
