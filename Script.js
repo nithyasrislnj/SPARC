@@ -677,3 +677,9 @@ function toggleStatistics(){
         button.innerHTML ="📈 Show Statistics";
     }
 } */
+
+function toggleMenu(){
+    document
+        .getElementById("mobileNav")
+        .classList.toggle("show-menu");
+}
