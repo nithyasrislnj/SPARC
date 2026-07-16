@@ -138,17 +138,19 @@
       font-weight: 500;
     }
 
-    .nav-right{
+    .navbar-actions{
       display:flex;
       align-items:center;
       gap:15px;
     }
 
-    .menu-icon{
+    .hamburger{
       display:none;
       font-size:32px;
       cursor:pointer;
       color:var(--primary);
+      user-select:none;
+      font-weight:bold;
     }
 
     nav a:hover {
@@ -1077,20 +1079,20 @@
         background:var(--surface);
         flex-direction:column;
         gap:0;
-        box-shadow:0 10px 20px rgba(0,0,0,.15);
+        box-shadow:0 8px 20px rgba(0,0,0,.15);
       }
 
       nav a{
         width:100%;
-        padding:18px;
+        padding:18px 25px;
         border-bottom:1px solid var(--border);
       }
 
-      nav.show-menu{
+      nav.show{
         display:flex;
       }
 
-      .menu-icon{
+      .hamburger{
         display:block;
       }
 

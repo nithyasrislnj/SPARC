@@ -683,3 +683,30 @@ function toggleMenu(){
         .getElementById("mobileNav")
         .classList.toggle("show-menu");
 }
+
+/* ==========================
+   MOBILE NAVIGATION
+========================== */
+
+function toggleMenu(){
+    const nav =
+    document.getElementById("navbar");
+
+    nav.classList.toggle("show");
+}
+
+
+/* Close menu after clicking a link */
+document.addEventListener("DOMContentLoaded", () => {
+    const links =
+    document.querySelectorAll("#navMenu a");
+
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+
+            document
+                .getElementById("navMenu")
+                .classList.remove("show");
+        });
+    });
+});
