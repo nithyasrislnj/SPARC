@@ -678,34 +678,25 @@ function toggleStatistics(){
     }
 } */
 
-function toggleMenu(){
-    document
-        .getElementById("mobileNav")
-        .classList.toggle("show-menu");
-}
 
-/* ==========================
-   MOBILE NAVIGATION
-========================== */
-
+/* MOBILE NAVIGATION */
 function toggleMenu(){
     const nav =
     document.getElementById("navbar");
 
     nav.classList.toggle("show");
 }
-
+ 
 
 /* Close menu after clicking a link */
 document.addEventListener("DOMContentLoaded", () => {
     const links =
-    document.querySelectorAll("#navMenu a");
+    document.querySelectorAll("#navbar a");
 
     links.forEach(link => {
         link.addEventListener("click", () => {
-
             document
-                .getElementById("navMenu")
+                .getElementById("navbar")
                 .classList.remove("show");
         });
     });
