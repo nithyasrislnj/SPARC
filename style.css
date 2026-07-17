@@ -395,9 +395,10 @@
     
     .hero-wave{
       position:absolute;
-      bottom:0;
-      left:0;
-      width:100%;
+      bottom:-1px;
+      left:50%;
+      transform:translateX(-50%);
+      width:100vw;
       height:180px;
     }
 
@@ -1056,6 +1057,10 @@
 
     /* RESPONSIVE */
     @media (max-width: 1024px) {
+      .hero{
+        padding:96px 0 130px;
+      }
+
       .role-grid {
         grid-template-columns: repeat(2, 1fr);
       }
