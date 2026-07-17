@@ -681,10 +681,10 @@ function toggleStatistics(){
 
 /* MOBILE NAVIGATION */
 function toggleMenu(){
-    const nav =
-    document.getElementById("navbar");
-
-    nav.classList.toggle("show");
+    const navbar = document.getElementById("navbar");
+    if(navbar){
+      navbar.classList.toggle("show");
+    }
 }
  
 
