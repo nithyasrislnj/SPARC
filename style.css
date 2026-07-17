@@ -395,7 +395,7 @@
     
     .hero-wave{
       position:absolute;
-      bottom:-1px;
+      bottom:0;
       left:0;
       width:100%;
       height:180px;
@@ -976,7 +976,7 @@
       background: var(--primary);
       color: white;
       padding: 48px 0;
-      margin-top: 80px;
+      margin-top: 0;
     }
 
     .footer-grid {
@@ -1114,6 +1114,18 @@
         grid-template-columns: 1fr;
       }
 
+      .hero{
+        padding:70px 0 120px;
+      }
+
+      .hero-wave{
+        height:90px;
+      }
+
+      .hero-wave svg{
+        display:block;
+      }
+
       .hero h1 {
         font-size:32px;
         text-align:center;
@@ -1140,7 +1152,9 @@
     }
 
     .home-image{
+      display:block;
       width:100%;
       height:auto;
-      display:block;
+      margin:0;
+      padding:0;
     }
