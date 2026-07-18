@@ -864,6 +864,59 @@
       border: 1px solid #fef08a;
     }
 
+    /* DASHBOARD LOADER */
+
+    .dashboard-loader{
+      position:fixed;
+      inset:0;
+      background:var(--background);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:999999;
+    }
+
+    .loader-box{
+      text-align:center;
+    }
+
+    .loader-logo{
+      width:70px;
+      height:70px;
+      margin:auto;
+      font-size:32px;
+    }
+
+    .loader-box h2{
+      margin-top:18px;
+      color:var(--primary);
+      font-size:36px;
+    }
+
+    .loader-box p{
+      margin-top:18px;
+      color:var(--subtext);
+    }
+
+    .loader-spinner{
+      width:45px;
+      height:45px;
+      margin:25px auto;
+      border:5px solid #d1d5db;
+      border-top:5px solid var(--primary);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    @keyframes spin{
+      from{
+        transform:rotate(0deg);
+      }
+      to{
+        transform:rotate(360deg);
+      }
+    }
+
     /* FORMS */
 
     .form-box {
@@ -1053,6 +1106,29 @@
 
     body.dark-theme .role-card p{
       color:var(--subtext);
+    }
+
+
+    .home-image{
+      display:block;
+      width:100%;
+      height:auto;
+      margin:0;
+      padding:0;
+    }
+
+    /* Hide navbar links on all pages except Home */
+    body.no-navbar-links nav{
+      display:none;
+    }
+
+    #mainContent{
+      opacity:0;
+      transition:opacity .35s ease;
+    }
+
+    #mainContent.show{
+      opacity:1;
     }
 
     /* RESPONSIVE */

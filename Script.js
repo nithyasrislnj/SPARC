@@ -329,6 +329,11 @@ async function toggleProfileMenu(){
     });
 }
 
+/* Close Profile Menu */
+function closeProfileMenu() {
+    document.getElementById("profileMenu").style.display = "none";
+    document.getElementById("mainContent").classList.remove("blur-bg");
+}
 
 async function openNotifications(){
     const email = localStorage.getItem("email");
@@ -359,7 +364,9 @@ async function openNotifications(){
         });
     }
     document.getElementById("panelContent").innerHTML = html;
+    closeProfileMenu();
     document.getElementById("sidePanel").classList.add("active");
+    document.body.style.overflow = "hidden";
     document.getElementById("mainContent").classList.add("blur-bg");
 }
 
@@ -398,7 +405,9 @@ async function openActivity(){
         });
     }
     document.getElementById("panelContent").innerHTML = html;
+    closeProfileMenu();
     document.getElementById("sidePanel").classList.add("active");
+    document.body.style.overflow = "hidden";
     document.getElementById("mainContent").classList.add("blur-bg");
 }
 
@@ -429,8 +438,9 @@ function openSettings(){
       <button onclick="toggleDarkMode()">Dark Mode</button>
     `;
 
+    closeProfileMenu();
     document.getElementById("sidePanel").classList.add("active");
-
+    document.body.style.overflow = "hidden";
     document.getElementById("mainContent").classList.add("blur-bg");
 
   });
@@ -602,6 +612,9 @@ function closePanel(){
     document
     .getElementById("sidePanel")
     .classList.remove("active");
+
+    document.getElementById("mainContent").classList.remove("blur-bg");
+    document.body.style.overflow = "";
 }
 
 /* Dashboard Greetings 

@@ -268,16 +268,32 @@ async function loadDashboard(role){
 
       loadQuickActions(role);
 
+      // Show dashboard after everything has loaded
+      document.getElementById("dashboardLoader").style.display = "none";
+
+      const main = document.getElementById("mainContent");
+      main.style.display = "block";
+
+      setTimeout(() => {
+          main.classList.add("show");
+      }, 50);
   }
   catch(error){
-
     console.error("Dashboard Error:", error);
+
+    document.getElementById("dashboardLoader").style.display = "none";
+
+    const main = document.getElementById("mainContent");
+    main.style.display = "block";
+
+    setTimeout(() => {
+        main.classList.add("show");
+    }, 50);
 
     alert(
         "Dashboard failed to load.\n\n" +
         "Open the browser Console (F12) to see the exact error."
     );
-
   }
 }
 
