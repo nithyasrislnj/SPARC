@@ -1123,12 +1123,8 @@
     }
 
     #mainContent{
-      opacity:0;
-      transition:opacity .35s ease;
-    }
-
-    #mainContent.show{
       opacity:1;
+      transition:opacity .35s ease;
     }
 
     /* RESPONSIVE */
