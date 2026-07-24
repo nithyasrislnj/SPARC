@@ -142,13 +142,28 @@ function renderUsers() {
                         .toLocaleDateString()}
                 </td>
                 <td>
-                    <button
-                        class="delete-btn"
-                        onclick="deleteUser(${user.id})">
+                    ${
+                        user.status === "Inactive"
+                        ? `
+                            <button
+                                class="delete-btn"
+                                disabled
+                                style="background:#808080; cursor:not-allowed;">
 
-                        Delete
+                                Inactive
 
-                    </button>
+                            </button>
+                        `
+                        : `
+                            <button
+                                class="delete-btn"
+                                onclick="deleteUser(${user.id})">
+
+                                Delete
+
+                            </button>
+                        `
+                    }
                 </td>
             </tr>
         `;
