@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users | SPARC</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-background">
+    <!--  NAVBAR -->
+    <header>
+        <div class="container navbar">
+            <div class="logo-area">
+                <div class="logo-circle">S</div>
+                <h2 class="logo-title">SPARC</h2>
+            </div>
+
+            <button class="primary-btn"
+                onclick="window.location.href='dashboard.html'">
+                ← Back to Dashboard
+            </button>
+        </div>
+    </header>
+
+    <!-- MANAGE USERS SECTION -->
+    <section class="section-padding">
+        <div class="container">
+            <h1 class="section-title">
+                👥 Manage Users
+            </h1>
+
+            <p class="section-subtitle">
+                View, search and manage all registered users.
+            </p>
+
+            <br><br>
+
+            <!-- USER STATISTICS -->
+            <div class="manage-user-stats">
+
+                <div class="summary-card">
+                    <h3>👥</h3>
+                    <p>Total Users</p>
+                    <h2 id="totalUsers">0</h2>
+                </div>
+
+                <div class="summary-card">
+                    <h3>🤝</h3>
+                    <p>Volunteers</p>
+                    <h2 id="volunteerCount">0</h2>
+                </div>
+
+                <div class="summary-card">
+                    <h3>🏢</h3>
+                    <p>NGOs</p>
+                    <h2 id="ngoCount">0</h2>
+                </div>
+
+                <div class="summary-card">
+                    <h3>🍱</h3>
+                    <p>Donors</p>
+                    <h2 id="donorCount">0</h2>
+                </div>
+
+                <div class="summary-card">
+                    <h3>💼</h3>
+                    <p>Employers</p>
+                    <h2 id="employerCount">0</h2>
+                </div>
+            </div>
+
+            <br><br>
+
+            <!-- SEARCH BOX -->
+            <input
+                type="text"
+                id="userSearch"
+                placeholder="🔍 Search users by name or email">
+
+            <br><br>
+
+            <!-- ROLE BUTTONS -->
+            <div class="role-buttons">
+                <button
+                    class="primary-btn"
+                    onclick="loadUsersByRole('Volunteer')">
+                    Volunteer
+                </button>
+
+                <button
+                    class="primary-btn"
+                    onclick="loadUsersByRole('NGO')">
+                    NGO
+                </button>
+
+                <button
+                    class="primary-btn"
+                    onclick="loadUsersByRole('Donor')">
+                    Donor
+                </button>
+
+                <button
+                    class="primary-btn"
+                    onclick="loadUsersByRole('Employer')">
+                    Employer
+                </button>
+            </div>
+
+            <br><br>
+
+            <!-- USERS TABLE -->
+            <div id="usersTableContainer">
+                <div class="dashboard-actions">
+                    <p style="text-align:center;">
+                        Select a role to load users.
+                    </p>
+                </div>
+            </div>
+
+            <br>
+
+            <!-- PAGINATION -->
+            <div id="pagination"></div>
+
+        </div>
+    </section>
+
+    <script src="config.js"></script>
+    <script src="manage-users.js"></script>
+
+</body>
+</html>

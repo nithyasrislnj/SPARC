@@ -557,7 +557,7 @@ function loadQuickActions(role){
     else if(role === "Admin"){
         html = `
         <button class="primary-btn"
-            onclick="toggleManageUsers()">
+            onclick="window.location.href='manage-users.html'">
             👥 Manage Users
         </button>
 
@@ -781,51 +781,3 @@ window.addEventListener("load", ()=>{
 
 });
 
-
-/* ADMIN MANAGE USERS */
-let manageUsersVisible = false;
-
-async function toggleManageUsers(){
-    const panel =
-    document.getElementById("manageUsersPanel");
-
-    if(manageUsersVisible){
-        panel.style.display = "none";
-        manageUsersVisible = false;
-        return;
-    }
-
-    panel.style.display = "block";
-    manageUsersVisible = true;
-    await loadUserCounts();
-}
-
-async function loadUserCounts(){
-    try{
-        const response =
-        await fetch(
-        `${API_BASE_URL}/api/admin/user-counts`
-        );
-
-        const data =
-        await response.json();
-
-        document.getElementById("volunteerBtn").innerHTML =
-        `Volunteer (${data.Volunteer || 0})`;
-
-        document.getElementById("ngoBtn").innerHTML =
-        `NGO (${data.NGO || 0})`;
-
-        document.getElementById("donorBtn").innerHTML =
-        `Donor (${data.Donor || 0})`;
-
-        document.getElementById("employerBtn").innerHTML =
-        `Employer (${data.Employer || 0})`;
-
-    }
-
-    catch(error){
-        console.log(error);
-        alert("Unable to load user counts.");
-    }
-}
