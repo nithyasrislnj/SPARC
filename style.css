@@ -928,7 +928,7 @@
     }
 
     #userSearch:focus {
-      border-color: var(--primary-color);
+      border-color: var(--primary);
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
     }
 
@@ -940,11 +940,11 @@
     .clickable-card:hover{
       transform:translateY(-6px);
       box-shadow:0 10px 25px rgba(0,0,0,.12);
-      border-color:var(--primary-color);
+      border-color:var(--primary);
     }
 
     .clickable-card.active{
-      border:2px solid var(--primary-color);
+      border:2px solid var(--primary);
       transform:translateY(-4px);
       box-shadow:0 10px 20px rgba(0,0,0,.12);
     }
@@ -962,7 +962,7 @@
     }
 
     .users-table thead {
-      background: var(--primary-color);
+      background: var(--primary);
       color: white;
     }
 
@@ -990,12 +990,20 @@
     /* STATUS BADGE */
     .status-badge {
       display: inline-block;
-      background: #eaf8ef;
-      color: #2e7d32;
       padding: 6px 12px;
       border-radius: 50px;
       font-size: 13px;
       font-weight: 600;
+    }
+
+    .active-status{
+      background:#dcfce7;
+      color:#15803d;
+    }
+
+    .inactive-status{
+      background:#fee2e2;
+      color:#dc2626;
     }
 
 
@@ -1099,9 +1107,9 @@
     }
 
     .status-filter .primary-btn.active{
-      background:var(--primary-color);
+      background:var(--primary);
       color:#fff;
-      border:2px solid var(--primary-color);
+      border:2px solid var(--primary);
     }
 
     /* MANAGE USERS - DARK THEME */
@@ -1143,7 +1151,7 @@
     }
 
     body.dark-theme .clickable-card.active{
-      border:2px solid var(--primary-color);
+      border:2px solid var(--primary);
       box-shadow:0 8px 20px rgba(20,184,166,.35);
     }
 
