@@ -330,6 +330,9 @@ async function deleteUser(userId) {
 
 /* PAGE LOAD */
 window.onload = async function () {
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-theme");
+    }
     await loadUserCounts();
 };
 

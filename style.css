@@ -1075,6 +1075,58 @@
       }
     }
 
+    /* MANAGE USERS - DARK THEME */
+    body.dark-theme #userSearch{
+      background:#1f2937;
+      color:#ffffff;
+      border:1px solid #4b5563;
+    }
+
+    body.dark-theme #userSearch::placeholder{
+      color:#bdbdbd;
+    }
+
+    body.dark-theme .users-table{
+      background:#1f2937;
+      color:#ffffff;
+    }
+
+    body.dark-theme .users-table thead{
+      background:#0f766e;
+    }
+
+    body.dark-theme .users-table tbody tr{
+      border-bottom:1px solid #374151;
+    }
+
+    body.dark-theme .users-table tbody tr:hover{
+      background:#2d3748;
+    }
+
+    body.dark-theme .status-badge{
+      background:#14532d;
+      color:#bbf7d0;
+    }
+
+    body.dark-theme .clickable-card{
+      background:#1f2937;
+      color:#ffffff;
+    }
+
+    body.dark-theme .clickable-card.active{
+      border:2px solid var(--primary-color);
+      box-shadow:0 8px 20px rgba(20,184,166,.35);
+    }
+
+    body.dark-theme .dashboard-actions{
+      background:#1f2937;
+      color:#ffffff;
+    }
+
+    body.dark-theme #pagination span{
+      color:#ffffff;
+    }
+
     /* FORMS */
 
     .form-box {
