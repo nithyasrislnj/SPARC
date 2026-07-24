@@ -149,7 +149,9 @@ def login():
         """
         SELECT id,name,email,password,role,status,join_date,dark_mode
         FROM users
-        WHERE email=%s AND role=%s
+        WHERE email=%s 
+        AND role=%s
+        AND status='Active'
         """,
         (email, role)
     )
@@ -1323,9 +1325,16 @@ def admin_delete_user(user_id):
     cursor = db.cursor()
 
     cursor.execute(
-        "DELETE FROM users WHERE id=%s",
+        """
+        UPDATE users
+        SET status='Inactive'
+        WHERE id=%s
+        """,
         (user_id,)
     )
+
+    print("User ID:", user_id)
+    print("Rows Updated:", cursor.rowcount)
 
     db.commit()
 
