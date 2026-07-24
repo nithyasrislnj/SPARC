@@ -598,7 +598,7 @@ def get_applications():
     cursor.close()
     db.close()
 
-    return jsonify(applications)
+    return jsonify(applications) 
 
 
 # Roles
@@ -1257,6 +1257,85 @@ def get_activity(email):
     db.close()
 
     return jsonify(activity)
+
+
+@app.route("/api/admin/user-counts", methods=["GET"])
+def admin_user_counts():
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT role, COUNT(*) AS total
+        FROM users
+        GROUP BY role
+    """)
+
+    rows = cursor.fetchall()
+
+    counts = {
+        "Volunteer": 0,
+        "NGO": 0,
+        "Donor": 0,
+        "Employer": 0
+    }
+
+    for row in rows:
+        counts[row["role"]] = row["total"]
+
+    cursor.close()
+    db.close()
+
+    return jsonify(counts)
+
+
+@app.route("/api/admin/users/<role>", methods=["GET"])
+def admin_get_users(role):
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            id,
+            name,
+            email,
+            role,
+            status,
+            join_date
+        FROM users
+        WHERE role=%s
+        ORDER BY join_date DESC
+    """, (role,))
+
+    users = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return jsonify(users)
+
+
+@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
+def admin_delete_user(user_id):
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        "DELETE FROM users WHERE id=%s",
+        (user_id,)
+    )
+
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    return jsonify({
+        "success": True,
+        "message": "User deleted successfully"
+    })
 
 
 # -----------------------------
