@@ -4,6 +4,7 @@ let masterUsers = [];
 
 let currentRole = "";
 let currentPage = 1;
+let currentStatus = "";
 
 const USERS_PER_PAGE = 10;
 
@@ -61,8 +62,14 @@ async function loadUsersByRole(role) {
         const users = await response.json();
 
         allUsers = users;
-        filteredUsers = [...users];
-        renderUsers();
+
+        if(currentStatus===""){
+            filteredUsers=[...allUsers];
+            renderUsers();
+        }
+        else{
+            filterByStatus(currentStatus);
+        }
     }
 
     catch (error) {
@@ -193,9 +200,14 @@ document
             }
 
             else{
-                allUsers=[...masterUsers];
-                filteredUsers=[...masterUsers];
-                renderUsers();
+                allUsers = [...masterUsers];
+                if(currentStatus===""){
+                    filteredUsers=[...allUsers];
+                    renderUsers();
+                }
+                else{
+                    filterByStatus(currentStatus);
+                }
             }
         }
 
@@ -301,7 +313,7 @@ function nextPage() {
 }
 
 
-/* DELETE USER */
+/* TOGGLE USER STATUS */
 async function toggleUserStatus(userId){
 
     const confirmAction=confirm(
@@ -359,7 +371,6 @@ window.onload = async function () {
     if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-theme");
     }
-    document.getElementById("allBtn").classList.add("active");
     await loadUserCounts();
 };
 
@@ -389,9 +400,15 @@ async function loadAllUsers() {
 
         masterUsers=users;
 
-        allUsers=users;
-        filteredUsers = [...users];
-        renderUsers();
+        allUsers = users;
+
+        if(currentStatus===""){
+            filteredUsers=[...allUsers];
+            renderUsers();
+        }
+        else{
+            filterByStatus(currentStatus);
+        }
     }
 
     catch(error){
@@ -401,17 +418,13 @@ async function loadAllUsers() {
 }
 
 function filterByStatus(status){
+
+    currentStatus = status;
     currentPage = 1;
 
-    if(status === "All"){
-        filteredUsers = [...allUsers];
-    }
-
-    else{
-        filteredUsers = allUsers.filter(
-            user => user.status === status
-        );
-    }
+    filteredUsers = allUsers.filter(
+        user => user.status === status
+    );
 
     renderUsers();
 
@@ -419,15 +432,11 @@ function filterByStatus(status){
         .querySelectorAll(".status-filter .primary-btn")
         .forEach(btn => btn.classList.remove("active"));
 
-    if(status === "All"){
-        document.getElementById("allBtn").classList.add("active");
-    }
-
-    if(status === "Active"){
+    if(status==="Active"){
         document.getElementById("activeBtn").classList.add("active");
     }
 
-    if(status === "Inactive"){
+    if(status==="Inactive"){
         document.getElementById("inactiveBtn").classList.add("active");
     }
 }
