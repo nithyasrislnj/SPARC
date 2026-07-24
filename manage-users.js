@@ -143,23 +143,24 @@ function renderUsers() {
                 </td>
                 <td>
                     ${
-                        user.status === "Inactive"
-                        ? `
+                        user.status === "Active"
+                        ?
+                        `
                             <button
                                 class="delete-btn"
-                                disabled
-                                style="background:#808080; cursor:not-allowed;">
+                                onclick="toggleUserStatus(${user.id})">
 
-                                Inactive
+                                Deactivate
 
                             </button>
                         `
-                        : `
+                        :
+                        `
                             <button
-                                class="delete-btn"
-                                onclick="deleteUser(${user.id})">
+                                class="primary-btn"
+                                onclick="toggleUserStatus(${user.id})">
 
-                                Delete
+                                Reactivate
 
                             </button>
                         `
@@ -301,46 +302,56 @@ function nextPage() {
 
 
 /* DELETE USER */
-async function deleteUser(userId) {
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to delete this user?"
-        );
+async function toggleUserStatus(userId){
 
-    if (!confirmDelete)
+    const confirmAction=confirm(
+        "Do you want to change this user's account status?"
+    );
+
+    if(!confirmAction)
         return;
 
-    try {
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/admin/users/${userId}`,
-                {
-                    method: "DELETE"
-                }
+    try{
+
+        const response=await fetch(
+            `${API_BASE_URL}/api/admin/users/${userId}`,
+            {
+                method:"PUT"
+            }
+        );
+
+        const result=await response.json();
+
+        if(result.success){
+
+            alert(
+                result.status==="Active"
+                ?
+                "User reactivated successfully."
+                :
+                "User deactivated successfully."
             );
 
-        const result = await response.json();
-
-        if (result.success) {
-            alert("User deleted successfully.");
             await loadUserCounts();
-            if (currentRole === "All") {
+
+            if(currentRole==="All"){
                 await loadAllUsers();
-            } 
-            else {
+            }
+            else{
                 await loadUsersByRole(currentRole);
             }
-        }
 
-        else {
+        }
+        else{
             alert(result.message);
         }
+
+    }
+    catch(error){
+        console.error(error);
+        alert("Unable to update user status.");
     }
 
-    catch (error) {
-        console.error(error);
-        alert("Unable to delete user.");
-    }
 }
 
 /* PAGE LOAD */
@@ -348,6 +359,7 @@ window.onload = async function () {
     if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-theme");
     }
+    document.getElementById("allBtn").classList.add("active");
     await loadUserCounts();
 };
 
@@ -385,5 +397,37 @@ async function loadAllUsers() {
     catch(error){
         console.error(error);
         alert("Unable to load users.");
+    }
+}
+
+function filterByStatus(status){
+    currentPage = 1;
+
+    if(status === "All"){
+        filteredUsers = [...allUsers];
+    }
+
+    else{
+        filteredUsers = allUsers.filter(
+            user => user.status === status
+        );
+    }
+
+    renderUsers();
+
+    document
+        .querySelectorAll(".status-filter .primary-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    if(status === "All"){
+        document.getElementById("allBtn").classList.add("active");
+    }
+
+    if(status === "Active"){
+        document.getElementById("activeBtn").classList.add("active");
+    }
+
+    if(status === "Inactive"){
+        document.getElementById("inactiveBtn").classList.add("active");
     }
 }

@@ -89,10 +89,38 @@
             <br><br>
 
             <!-- SEARCH BOX -->
-            <input
-                type="text"
-                id="userSearch"
-                placeholder="🔍 Search users by name or email">
+            <div class="user-search-bar">
+                <input
+                    type="text"
+                    id="userSearch"
+                    placeholder="🔍 Search users by name or email">
+
+                <div class="status-filter">
+                    <button
+                        class="primary-btn"
+                        id="allBtn"
+                        onclick="filterByStatus('All')">
+
+                        All
+                    </button>
+
+                    <button
+                        class="primary-btn"
+                        id="activeBtn"
+                        onclick="filterByStatus('Active')">
+
+                        Active
+                    </button>
+
+                    <button
+                        class="primary-btn"
+                        id="inactiveBtn"
+                        onclick="filterByStatus('Inactive')">
+
+                        Inactive
+                    </button>
+                </div>
+            </div>
 
             <br><br>
 

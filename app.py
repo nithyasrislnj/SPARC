@@ -1318,23 +1318,35 @@ def admin_get_users(role):
     return jsonify(users)
 
 
-@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
-def admin_delete_user(user_id):
+@app.route("/api/admin/users/<int:user_id>", methods=["PUT"])
+def toggle_user_status(user_id):
 
     db = get_db()
     cursor = db.cursor()
 
-    cursor.execute(
-        """
-        UPDATE users
-        SET status='Inactive'
+    cursor.execute("""
+        SELECT status
+        FROM users
         WHERE id=%s
-        """,
-        (user_id,)
-    )
+    """,(user_id,))
 
-    print("User ID:", user_id)
-    print("Rows Updated:", cursor.rowcount)
+    result = cursor.fetchone()
+
+    if not result:
+        return jsonify({
+            "success":False,
+            "message":"User not found"
+        }),404
+
+    current_status=result[0]
+
+    new_status="Inactive" if current_status=="Active" else "Active"
+
+    cursor.execute("""
+        UPDATE users
+        SET status=%s
+        WHERE id=%s
+    """,(new_status,user_id))
 
     db.commit()
 
@@ -1342,8 +1354,9 @@ def admin_delete_user(user_id):
     db.close()
 
     return jsonify({
-        "success": True,
-        "message": "User deleted successfully"
+        "success":True,
+        "status":new_status,
+        "message":"User status updated successfully."
     })
 
 
