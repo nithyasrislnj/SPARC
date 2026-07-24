@@ -29,8 +29,6 @@ async function loadUserCounts() {
         document.getElementById("totalUsers").innerText =
             volunteer + ngo + donor + employer;
         
-        masterUsers = [];
-
     }
     catch (error) {
         console.error(error);
@@ -311,7 +309,12 @@ async function deleteUser(userId) {
         if (result.success) {
             alert("User deleted successfully.");
             await loadUserCounts();
-            await loadUsersByRole(currentRole);
+            if (currentRole === "All") {
+                await loadAllUsers();
+            } 
+            else {
+                await loadUsersByRole(currentRole);
+            }
         }
 
         else {
@@ -341,7 +344,7 @@ async function loadAllUsers() {
 
     container.innerHTML = `
         <div class="dashboard-actions">
-            <p style="text-align:center" color:green>
+            <p style="text-align:center; color:green;">
                 Loading users...
             </p>
         </div>

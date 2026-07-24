@@ -932,17 +932,6 @@
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
     }
 
-    .role-buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin-bottom: 25px;
-    }
-
-    .role-buttons .primary-btn {
-      min-width: 140px;
-    }
-
     .clickable-card{
       cursor:pointer;
       transition:.3s;
@@ -951,17 +940,20 @@
     .clickable-card:hover{
       transform:translateY(-6px);
       box-shadow:0 10px 25px rgba(0,0,0,.12);
-      border-color:var(--primary);
+      border-color:var(--primary-color);
     }
 
     .clickable-card.active{
-      border:2px solid var(--primary);
+      border:2px solid var(--primary-color);
+      transform:translateY(-4px);
+      box-shadow:0 10px 20px rgba(0,0,0,.12);
     }
 
 
     /* USERS TABLE */
     .users-table {
       width: 100%;
+      table-layout: auto;
       border-collapse: collapse;
       background: #fff;
       border-radius: 15px;
@@ -1051,10 +1043,6 @@
     @media (max-width: 768px) {
       .manage-user-stats {
         grid-template-columns: repeat(2, 1fr);
-      }
-
-      .role-buttons {
-        justify-content: center;
       }
 
       #userSearch {
