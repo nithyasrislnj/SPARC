@@ -1338,6 +1338,30 @@ def admin_delete_user(user_id):
     })
 
 
+@app.route("/api/admin/users", methods=["GET"])
+def get_all_users():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            id,
+            name,
+            email,
+            role,
+            status,
+            join_date
+        FROM users
+        ORDER BY role,name
+    """)
+
+    users = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    return jsonify(users)
+
+
 # -----------------------------
 # HOME
 @app.route("/")

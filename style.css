@@ -943,6 +943,21 @@
       min-width: 140px;
     }
 
+    .clickable-card{
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .clickable-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 10px 25px rgba(0,0,0,.12);
+      border-color:var(--primary);
+    }
+
+    .clickable-card.active{
+      border:2px solid var(--primary);
+    }
+
 
     /* USERS TABLE */
     .users-table {

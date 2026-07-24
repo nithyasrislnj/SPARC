@@ -1,5 +1,6 @@
 let allUsers = [];
 let filteredUsers = [];
+let masterUsers = [];
 
 let currentRole = "";
 let currentPage = 1;
@@ -27,6 +28,8 @@ async function loadUserCounts() {
 
         document.getElementById("totalUsers").innerText =
             volunteer + ngo + donor + employer;
+        
+        masterUsers = [];
 
     }
     catch (error) {
@@ -39,6 +42,7 @@ async function loadUserCounts() {
 async function loadUsersByRole(role) {
     currentRole = role;
     currentPage = 1;
+    highlightCard(role);
 
     const container =
         document.getElementById("usersTableContainer");
@@ -56,8 +60,10 @@ async function loadUsersByRole(role) {
             `${API_BASE_URL}/api/admin/users/${role}`
         );
 
-        allUsers = await response.json();
-        filteredUsers = [...allUsers];
+        const users = await response.json();
+
+        allUsers = users;
+        filteredUsers = [...users];
         renderUsers();
     }
 
@@ -72,6 +78,18 @@ async function loadUsersByRole(role) {
             </div>
         `;
     }
+}
+
+function highlightCard(role){
+    document
+        .querySelectorAll(".clickable-card")
+        .forEach(card=>{
+
+            card.classList.remove("active");
+            if(card.dataset.role===role){
+                card.classList.add("active");
+            }
+        });
 }
 
 /* RENDER USERS */
@@ -101,6 +119,7 @@ function renderUsers() {
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Role</th>
                     <th>Status</th>
                     <th>Joined</th>
                     <th>Action</th>
@@ -114,6 +133,7 @@ function renderUsers() {
             <tr>
                 <td>${user.name}</td>
                 <td>${user.email}</td>
+                <td>${user.role}</td>
                 <td>
                     <span class="status-badge">
                         ${user.status}
@@ -147,23 +167,58 @@ function renderUsers() {
 
 /* SEARCH USERS */
 document
-    .getElementById("userSearch")
-    .addEventListener("input", function () {
+.getElementById("userSearch")
+.addEventListener("input",async function(){
 
-        const keyword =
-            this.value.toLowerCase().trim();
+    const keyword=this.value.trim().toLowerCase();
 
-        filteredUsers = allUsers.filter(user => {
-            return (
-                user.name.toLowerCase().includes(keyword) ||
-                user.email.toLowerCase().includes(keyword)
+    if(keyword===""){
+        if(currentRole==="All"){
+            if(masterUsers.length===0){
+                await loadAllUsers();
+            }
+
+            else{
+                allUsers=[...masterUsers];
+                filteredUsers=[...masterUsers];
+                renderUsers();
+            }
+        }
+
+        else{
+            loadUsersByRole(currentRole);
+        }
+        return;
+    }
+
+    if(masterUsers.length===0){
+        const response=
+            await fetch(
+                `${API_BASE_URL}/api/admin/users`
             );
-        });
 
-        currentPage = 1;
-        renderUsers();
-    });
+        masterUsers= await response.json();
+    }
 
+    filteredUsers=masterUsers.filter(user=>
+        user.name.toLowerCase().includes(keyword) ||
+        user.email.toLowerCase().includes(keyword)
+    );
+
+    currentPage=1;
+    renderUsers();
+
+    const roles=
+        [...new Set(filteredUsers.map(u=>u.role))];
+
+    if(roles.length===1){
+        highlightCard(roles[0]);
+    }
+
+    else{
+        highlightCard("All");
+    }
+});
 
 /* PAGINATION */
 function renderPagination() {
@@ -274,3 +329,40 @@ async function deleteUser(userId) {
 window.onload = async function () {
     await loadUserCounts();
 };
+
+
+async function loadAllUsers() {
+    currentRole = "All";
+    currentPage = 1;
+    highlightCard("All");
+
+    const container =
+        document.getElementById("usersTableContainer");
+
+    container.innerHTML = `
+        <div class="dashboard-actions">
+            <p style="text-align:center" color:green>
+                Loading users...
+            </p>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/api/admin/users`
+        );
+
+        const users= await response.json();
+
+        masterUsers=users;
+
+        allUsers=users;
+        filteredUsers = [...users];
+        renderUsers();
+    }
+
+    catch(error){
+        console.error(error);
+        alert("Unable to load users.");
+    }
+}
