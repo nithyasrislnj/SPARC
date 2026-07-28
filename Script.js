@@ -34,11 +34,11 @@ function openRegister(fromVolunteer = false){
 }
 
 function closeRegister(){
-  document.getElementById(
-    "registerModal"
-  ).style.display="none";
-}
+    if(window.location.pathname.includes("login.html"))
+        return;
 
+    document.getElementById("registerModal").style.display="none";
+}
 
 /* LOGIN */
 function openLogin(){
@@ -46,8 +46,12 @@ function openLogin(){
 }
 
 function closeLogin(){
-  document.getElementById("loginModal").style.display="none";
+    if(window.location.pathname.includes("login.html"))
+        return;
+
+    document.getElementById("loginModal").style.display="none";
 }
+
 
 document
 .getElementById("loginForm")
@@ -125,9 +129,17 @@ document
 
     closeLogin();
 
-    if(document.querySelector(".role-card")){
-      highlightRole(data.role);
-    }
+    /* Save complete logged-in user */
+    localStorage.setItem("loggedInUser", JSON.stringify({
+      token: data.token,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+      darkMode: data.darkMode
+    }));
+
+    /* Redirect to Home Page */
+    window.location.href = "home.html";
     
   }
   else{
@@ -220,7 +232,7 @@ window.addEventListener("load",()=>{
 });
 
 
-/* Dashboard Click */
+/* Dashboard Click 
 function openDashboard(){
 
     const token = localStorage.getItem("token");
@@ -232,29 +244,33 @@ function openDashboard(){
         return;
     }
 
-    /* OPEN USER'S OWN DASHBOARD */
+     OPEN USER'S OWN DASHBOARD 
     localStorage.setItem(
         "activeRole",
         role
     );
 
     window.location.href = "dashboard.html";
+} 
+*/
+
+function openDashboard(){
+
+    if(!localStorage.getItem("token")){
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+    window.location.href = "dashboard.html";
+
 }
 
-
-/* Logout */
 function logout(){
     localStorage.clear();
-
-    document.body.style.background="#fff";
-
-    document.body.style.color="#000";
-
-    document
-    .getElementById("mainContent")
-    .classList.remove("blur-bg");
-
-    location.reload();
+    window.location.href = "login.html";
 }
 
 
@@ -713,4 +729,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 .classList.remove("show");
         });
     });
+});
+
+
+/* LOGIN BUTTON / PROFILE BUTTON */
+window.addEventListener("DOMContentLoaded", () => {
+
+    const loginBtn = document.getElementById("loginBtn");
+    const profileBtn = document.getElementById("profileBtn");
+
+    if(!loginBtn || !profileBtn)
+        return;
+
+    const token = localStorage.getItem("token");
+
+    if(token){
+
+        loginBtn.style.display = "none";
+
+        profileBtn.style.display = "inline-block";
+
+        profileBtn.innerHTML =
+        "👤 " + localStorage.getItem("name");
+
+    }
+
+    else{
+
+        loginBtn.style.display = "inline-block";
+
+        profileBtn.style.display = "none";
+
+    }
+
 });

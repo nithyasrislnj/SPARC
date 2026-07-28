@@ -730,9 +730,7 @@ window.addEventListener("load", ()=>{
     const loginRole =
     localStorage.getItem("role");
 
-    const activeRole =
-    localStorage.getItem("activeRole");
-
+   const activeRole = localStorage.getItem("role");
 
     if(!loginRole){
 

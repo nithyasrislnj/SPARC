@@ -16,6 +16,13 @@
 </head>
 
 <body class="bg-background text-textmain no-navbar-links">
+
+<script>
+  if(!localStorage.getItem("token")){
+    window.location.replace("login.html");
+  }
+</script>
+
 <div id="homePage">
   <!-- NAVBAR -->
   <header>
@@ -38,8 +45,18 @@
         <a href="impact.html">Impact</a>
       </nav>
 
-      <button class="primary-btn" onclick="openLogin()">
+      <button
+        id="loginBtn"
+        class="primary-btn"
+        onclick="openLogin()">
         Login
+      </button>
+
+      <button
+        id="profileBtn"
+        class="primary-btn"
+        onclick="toggleProfileMenu()"
+        style="display:none;">
       </button>
 
     </div>

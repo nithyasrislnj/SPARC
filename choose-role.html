@@ -16,6 +16,13 @@
 </head>
 
 <body class="bg-background text-textmain no-navbar-links">
+
+<script>
+  if (!localStorage.getItem("token")) {
+    window.location.replace("login.html");
+  }
+</script>
+
 <div id="homePage">
   <!-- NAVBAR -->
   <header>
