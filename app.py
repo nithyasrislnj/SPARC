@@ -31,6 +31,10 @@ app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
 app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_MAX_EMAILS"] = 10
+app.config["MAIL_ASCII_ATTACHMENTS"] = False
+app.config["MAIL_SUPPRESS_SEND"] = False
+app.config["MAIL_TIMEOUT"] = 30
 
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
@@ -41,6 +45,11 @@ app.config["MAIL_DEFAULT_SENDER"] = (
 )
 
 mail = Mail(app)
+
+print("MAIL_SERVER =", app.config["MAIL_SERVER"])
+print("MAIL_PORT =", app.config["MAIL_PORT"])
+print("MAIL_USERNAME =", app.config["MAIL_USERNAME"])
+print("MAIL_DEFAULT_SENDER =", app.config["MAIL_DEFAULT_SENDER"])
 
 
 import string
@@ -1446,7 +1455,7 @@ def forgot_password():
 
     msg = Message(
         "SPARC Password Reset OTP",
-        sender=app.config["MAIL_USERNAME"],
+        sender=app.config["MAIL_DEFAULT_SENDER"],
         recipients=[email]
     )
 
@@ -1467,7 +1476,12 @@ def forgot_password():
     try:
         mail.send(msg)
     except Exception as e:
-        print("MAIL ERROR:", e)
+        import traceback
+
+        print("\n========== MAIL ERROR ==========")
+        traceback.print_exc()
+        print("Exception:", repr(e))
+        print("================================\n")
 
         return jsonify({
             "success": False,
