@@ -209,6 +209,43 @@
       margin-top:10px;
     }
 
+    /* Forgot Password */
+    .forgot-password{
+      text-align:right;
+      margin-top:-10px;
+      margin-bottom:18px;
+    }
+
+    .forgot-password a{
+      color:var(--primary);
+      font-size:14px;
+      font-weight:600;
+      transition:.3s;
+    }
+
+    .forgot-password a:hover{
+      text-decoration:underline;
+    }
+
+    /* Forgot Password Steps */
+    #forgotStep1,
+    #forgotStep2,
+    #forgotStep3{
+      animation:fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
     .close-btn{
       position:absolute;
       right:18px;
@@ -908,6 +945,41 @@
       animation:spin .8s linear infinite;
     }
 
+    /* OTP Loading Popup */
+
+    #loadingModal{
+      display:none;
+      z-index:100000;
+    }
+
+    #loadingModal .success-popup-box{
+      width:380px;
+    }
+
+    #loadingTitle{
+      margin-top:20px;
+      color:var(--primary);
+    }
+
+    #loadingSteps{
+      margin-top:20px;
+      text-align:left;
+    }
+
+    #loadingSteps p{
+      margin:12px 0;
+      color:var(--text);
+      font-size:15px;
+      line-height:1.5;
+    }
+
+    #loadingTitle{
+      margin-top:20px;
+      color:var(--primary);
+      font-size:24px;
+      text-align:center;
+    }
+
     /* MANAGE USERS PAGE */
     .manage-user-stats {
       display: grid;
@@ -1605,4 +1677,110 @@
     /* Hide navbar links on all pages except Home */
     body.no-navbar-links nav{
       display:none;
+    }
+
+    /* FORGOT PASSWORD */
+    .forgot-password{
+      text-align:right;
+      margin-top:-10px;
+      margin-bottom:18px;
+    }
+
+    .forgot-password a{
+      color:var(--primary);
+      text-decoration:none;
+      font-size:14px;
+      font-weight:600;
+      transition:.25s;
+    }
+
+    .forgot-password a:hover{
+      text-decoration:underline;
+    }
+
+
+    /* ALERT POPUP */
+    .success-popup{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      justify-content:center;
+      align-items:center;
+      z-index:999999;
+    }
+
+    .success-popup-box{
+      width:380px;
+      max-width:92%;
+      background:var(--card);
+      border-radius:22px;
+      padding:35px;
+      text-align:center;
+      animation:popupScale .25s ease;
+      box-shadow:0 20px 45px rgba(0,0,0,.22);
+    }
+
+    .success-popup-icon{
+      width:70px;
+      height:70px;
+      margin:auto;
+      border-radius:50%;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:34px;
+      font-weight:bold;
+      color:white;
+      background:#16a34a;
+    }
+
+    .success-popup-box h2{
+      margin-top:18px;
+      margin-bottom:10px;
+    }
+
+    .success-popup-box p{
+      color:#666;
+      margin-bottom:25px;
+      line-height:1.6;
+    }
+
+    .success-popup-box button{
+      width:100%;
+    }
+
+    /* FORGOT PASSWORD MODAL */
+    #forgotPasswordModal .login-box{
+      width:430px;
+    }
+
+    #forgotPasswordModal input{
+      margin-bottom:18px;
+    }
+
+    /* POPUP ANIMATION */
+    @keyframes popupScale{
+      from{
+        transform:scale(.8);
+        opacity:0;
+      }
+
+      to{
+        transform:scale(1);
+        opacity:1;
+      }
+    }
+
+    body.dark-theme .success-popup-box{
+      background:#1f2937;
+      color:white;
+    }
+
+    body.dark-theme .success-popup-box p{
+      color:#d1d5db;
+    }
+
+    body.dark-theme .forgot-password a{
+      color:#4ade80;
     }

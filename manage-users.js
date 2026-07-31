@@ -140,7 +140,7 @@ function renderUsers() {
                 <td>${user.email}</td>
                 <td>${user.role}</td>
                 <td>
-                    <span class="status-badge">
+                    <span class="status-badge ${user.status === 'Active' ? 'active-status' : 'inactive-status'}">
                         ${user.status}
                     </span>
                 </td>

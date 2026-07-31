@@ -18,8 +18,22 @@
 <body class="bg-background text-textmain">
 
   <script>
-    if(!localStorage.getItem("token")){
-      window.location.replace("login.html");
+    const rememberMe =
+    localStorage.getItem("rememberMe");
+
+    const token =
+    localStorage.getItem("token");
+
+    if(rememberMe === "true"){
+      if(!token){
+        window.location.replace("login.html");
+      }
+    }
+
+    else{
+      if(!token){
+        window.location.replace("login.html");
+      }
     }
   </script>
 

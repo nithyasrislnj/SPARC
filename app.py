@@ -3,6 +3,8 @@ from flask_cors import CORS
 import mysql.connector
 import bcrypt
 import os
+from flask_mail import Mail, Message
+import random
 
 from dotenv import load_dotenv
 
@@ -20,6 +22,35 @@ def get_db():
 
 app = Flask(__name__)
 CORS(app)
+
+
+# EMAIL CONFIGURATION (BREVO)
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+
+app.config["MAIL_DEFAULT_SENDER"] = (
+    "SPARC Team",
+    os.getenv("MAIL_DEFAULT_SENDER")
+)
+
+mail = Mail(app)
+
+
+import string
+from datetime import datetime, timedelta
+
+# Store OTP with expiry
+otp_storage = {}
+
+def generate_otp():
+    return ''.join(random.choices(string.digits, k=6))
 
 print("USING NEW APP.PY")
 print("get_db =", get_db)
@@ -168,7 +199,7 @@ def login():
         user[3].encode()
     ):
         return jsonify({
-            "message":"Wrong Password"
+            "message":"Incorrect password. Please try again."
         }),401
 
 
@@ -1382,6 +1413,176 @@ def get_all_users():
     db.close()
 
     return jsonify(users)
+
+
+@app.route("/forgot_password", methods=["POST"])
+def forgot_password():
+
+    data = request.json
+    email = data.get("email")
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM users WHERE email=%s",
+        (email,)
+    )
+
+    user = cursor.fetchone()
+
+    if not user:
+        return jsonify({
+            "success": False,
+            "message": "Email not registered"
+        }),404
+
+    otp = generate_otp()
+
+    otp_storage[email] = {
+        "otp": otp,
+        "expires": datetime.now() + timedelta(minutes=10)
+    }
+
+    msg = Message(
+        "SPARC Password Reset OTP",
+        sender=app.config["MAIL_USERNAME"],
+        recipients=[email]
+    )
+
+    msg.body = f"""
+        Hello {user['name']},
+
+        Your SPARC password reset OTP is:
+
+        {otp}
+
+        This OTP is valid for 10 minutes.
+
+        If you didn't request this, ignore this email.
+
+        -SPARC Team
+    """
+
+    try:
+        mail.send(msg)
+    except Exception as e:
+        print("MAIL ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    add_notification(
+        email,
+        "Password reset OTP sent to your email."
+    )
+
+    add_activity(
+        email,
+        "Requested password reset OTP"
+    )
+
+    cursor.close()
+    db.close()
+
+    return jsonify({
+        "success": True,
+        "message": "OTP sent successfully"
+    })
+
+
+@app.route("/verify_otp", methods=["POST"])
+def verify_otp():
+
+    data = request.json
+    email = data.get("email")
+    otp = data.get("otp")
+
+    if email not in otp_storage:
+        return jsonify({
+            "success": False,
+            "message": "OTP not found"
+        }),400
+
+    saved = otp_storage[email]
+
+    if datetime.now() > saved["expires"]:
+        del otp_storage[email]
+        return jsonify({
+            "success": False,
+            "message": "OTP expired"
+        }),400
+
+    if otp != saved["otp"]:
+        return jsonify({
+            "success": False,
+            "message": "Invalid OTP"
+        }),400
+
+    otp_storage[email]["verified"] = True
+
+    return jsonify({
+        "success": True,
+        "message": "OTP Verified"
+    })
+
+
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
+
+    data = request.json
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if email not in otp_storage:
+        return jsonify({
+            "success": False,
+            "message": "OTP verification required"
+        }),400
+
+    if not otp_storage[email].get("verified"):
+        return jsonify({
+            "success": False,
+            "message": "Please verify your OTP first."
+    }),400
+
+    hashed = bcrypt.hashpw(
+        password.encode(),
+        bcrypt.gensalt()
+    ).decode()
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        "UPDATE users SET password=%s WHERE email=%s",
+        (hashed, email)
+    )
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    add_notification(
+        email,
+        "Your password has been reset successfully."
+    )
+
+    add_activity(
+        email,
+        "Password reset successfully."
+    )
+
+    del otp_storage[email]
+
+    return jsonify({
+        "success": True,
+        "message": "Password updated successfully"
+    })
+
 
 
 # -----------------------------
