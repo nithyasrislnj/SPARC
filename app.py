@@ -46,8 +46,6 @@ app.config["MAIL_DEFAULT_SENDER"] = (
     os.getenv("MAIL_DEFAULT_SENDER")
 )
 
-mail = Mail(app)
-
 print("MAIL_SERVER =", app.config["MAIL_SERVER"])
 print("MAIL_PORT =", app.config["MAIL_PORT"])
 print("MAIL_USERNAME =", app.config["MAIL_USERNAME"])
@@ -1488,7 +1486,7 @@ def forgot_password():
 
         return jsonify({
             "success": False,
-            "message": str(e)
+            "message": repr(e)
         }), 500
 
     add_notification(
