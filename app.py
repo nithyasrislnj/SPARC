@@ -46,8 +46,6 @@ app.config["MAIL_DEFAULT_SENDER"] = (
     os.getenv("MAIL_DEFAULT_SENDER")
 )
 
-print("Attempting to send OTP email to:", email)
-
 mail = Mail(app)
 
 print("MAIL_SERVER =", app.config["MAIL_SERVER"])
