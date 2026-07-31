@@ -29,8 +29,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
 app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_PORT"] = 465
 app.config["MAIL_MAX_EMAILS"] = 10
 app.config["MAIL_ASCII_ATTACHMENTS"] = False
 app.config["MAIL_SUPPRESS_SEND"] = False
@@ -50,6 +51,8 @@ print("MAIL_SERVER =", app.config["MAIL_SERVER"])
 print("MAIL_PORT =", app.config["MAIL_PORT"])
 print("MAIL_USERNAME =", app.config["MAIL_USERNAME"])
 print("MAIL_DEFAULT_SENDER =", app.config["MAIL_DEFAULT_SENDER"])
+print("MAIL_PASSWORD EXISTS =", bool(app.config["MAIL_PASSWORD"]))
+print("MAIL_PASSWORD LENGTH =", len(app.config["MAIL_PASSWORD"]) if app.config["MAIL_PASSWORD"] else 0)
 
 
 import string
