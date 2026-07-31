@@ -29,9 +29,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
 app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_PORT"] = 465
+
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+
 app.config["MAIL_MAX_EMAILS"] = 10
 app.config["MAIL_ASCII_ATTACHMENTS"] = False
 app.config["MAIL_SUPPRESS_SEND"] = False
@@ -44,6 +45,8 @@ app.config["MAIL_DEFAULT_SENDER"] = (
     "SPARC Team",
     os.getenv("MAIL_DEFAULT_SENDER")
 )
+
+print("Attempting to send OTP email to:", email)
 
 mail = Mail(app)
 
@@ -1457,8 +1460,7 @@ def forgot_password():
     }
 
     msg = Message(
-        "SPARC Password Reset OTP",
-        sender=app.config["MAIL_DEFAULT_SENDER"],
+        subject="SPARC Password Reset OTP",
         recipients=[email]
     )
 
