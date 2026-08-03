@@ -1434,21 +1434,6 @@ def forgot_password():
         "expires": datetime.now() + timedelta(minutes=10)
     }
 
-    body = f"""
-    Hello {user['name']},
-
-    Your SPARC Password Reset OTP is:
-
-    {otp}
-
-    This OTP is valid for 10 minutes.
-
-    If you did not request this password reset,
-    please ignore this email.
-
-    Regards,
-    SPARC Team
-    """
 
     html_body = f"""
     <html>
@@ -1494,7 +1479,6 @@ def forgot_password():
             "subject": "SPARC Password Reset OTP",
 
             "htmlContent": html_body
-            "textContent": body
         }
 
         response = requests.post(
