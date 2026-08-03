@@ -41,9 +41,6 @@ otp_storage = {}
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
 
-print("USING NEW APP.PY")
-print("get_db =", get_db)
-
 
 # HELPER FUNCTIONS
 def add_notification(email, title):
@@ -62,6 +59,8 @@ def add_notification(email, title):
         title
     ))
     db.commit()
+    cursor.close()
+    db.close()
 
 
 def add_activity(email, description):
@@ -81,6 +80,8 @@ def add_activity(email, description):
     ))
 
     db.commit()
+    cursor.close()
+    db.close()
 
 
 # REGISTRATION API
@@ -1433,12 +1434,6 @@ def forgot_password():
         "expires": datetime.now() + timedelta(minutes=10)
     }
 
-    msg = MIMEMultipart()
-
-    msg["From"] = MAIL_DEFAULT_SENDER
-    msg["To"] = email
-    msg["Subject"] = "SPARC Password Reset OTP"
-
     body = f"""
     Hello {user['name']},
 
@@ -1455,7 +1450,27 @@ def forgot_password():
     SPARC Team
     """
 
-    msg.attach(MIMEText(body, "plain"))
+    html_body = f"""
+    <html>
+    <body style="font-family:Arial,sans-serif;">
+        <h2>SPARC Password Reset</h2>
+
+        <p>Hello <b>{user['name']}</b>,</p>
+
+        <p>Your OTP is:</p>
+
+        <h1 style="color:#0f7a2f;">{otp}</h1>
+
+        <p>This OTP is valid for <b>10 minutes</b>.</p>
+
+        <p>If you didn't request this password reset, please ignore this email.</p>
+
+        <br>
+
+        <p>Regards,<br><b>SPARC Team</b></p>
+    </body>
+    </html>
+    """
 
     try:
         headers = {
@@ -1478,6 +1493,7 @@ def forgot_password():
 
             "subject": "SPARC Password Reset OTP",
 
+            "htmlContent": html_body
             "textContent": body
         }
 
