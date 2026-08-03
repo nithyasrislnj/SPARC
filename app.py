@@ -4,12 +4,7 @@ import mysql.connector
 import bcrypt
 import os
 import random
-import smtplib
-import ssl
 import requests
-
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 from dotenv import load_dotenv
 
@@ -33,21 +28,9 @@ CORS(app)
 SECRET_KEY = os.getenv("SECRET_KEY")
 BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
-MAIL_SERVER = os.getenv("MAIL_SERVER")
-MAIL_PORT = int(os.getenv("MAIL_PORT"))
-
-MAIL_USERNAME = os.getenv("MAIL_USERNAME")
-MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-
 MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
 
-print("MAIL_SERVER =", MAIL_SERVER)
-print("MAIL_PORT =", MAIL_PORT)
-print("MAIL_USERNAME =", MAIL_USERNAME)
 print("MAIL_DEFAULT_SENDER =", MAIL_DEFAULT_SENDER)
-print("MAIL_PASSWORD EXISTS =", bool(MAIL_PASSWORD))
-print("MAIL_PASSWORD LENGTH =", len(MAIL_PASSWORD) if MAIL_PASSWORD else 0)
-
 
 import string
 from datetime import datetime, timedelta
