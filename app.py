@@ -1562,6 +1562,7 @@ def verify_otp():
     })
 
 
+
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
 
