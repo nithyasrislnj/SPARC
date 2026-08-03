@@ -3,8 +3,12 @@ from flask_cors import CORS
 import mysql.connector
 import bcrypt
 import os
-from flask_mail import Mail, Message
 import random
+import smtplib
+import ssl
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from dotenv import load_dotenv
 
@@ -27,24 +31,13 @@ CORS(app)
 # EMAIL CONFIGURATION (BREVO)
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
-app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
+MAIL_SERVER = os.getenv("MAIL_SERVER")
+MAIL_PORT = int(os.getenv("MAIL_PORT"))
 
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USE_SSL"] = False
+MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
-app.config["MAIL_MAX_EMAILS"] = 10
-app.config["MAIL_ASCII_ATTACHMENTS"] = False
-app.config["MAIL_SUPPRESS_SEND"] = False
-app.config["MAIL_TIMEOUT"] = 30
-
-app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-
-app.config["MAIL_DEFAULT_SENDER"] = (
-    "SPARC Team",
-    os.getenv("MAIL_DEFAULT_SENDER")
-)
+MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
 
 print("MAIL_SERVER =", app.config["MAIL_SERVER"])
 print("MAIL_PORT =", app.config["MAIL_PORT"])
@@ -1455,27 +1448,52 @@ def forgot_password():
         "expires": datetime.now() + timedelta(minutes=10)
     }
 
-    msg = Message(
-        subject="SPARC Password Reset OTP",
-        recipients=[email]
-    )
+    msg = MIMEMultipart()
 
-    msg.body = f"""
-        Hello {user['name']},
+    msg["From"] = MAIL_DEFAULT_SENDER
+    msg["To"] = email
+    msg["Subject"] = "SPARC Password Reset OTP"
 
-        Your SPARC password reset OTP is:
+    body = f"""
+    Hello {user['name']},
 
-        {otp}
+    Your SPARC Password Reset OTP is:
 
-        This OTP is valid for 10 minutes.
+    {otp}
 
-        If you didn't request this, ignore this email.
+    This OTP is valid for 10 minutes.
 
-        -SPARC Team
+    If you did not request this password reset,
+    please ignore this email.
+
+    Regards,
+    SPARC Team
     """
 
+    msg.attach(MIMEText(body, "plain"))
+
     try:
-        mail.send(msg)
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=20) as server:
+
+        server.ehlo()
+
+        server.starttls(context=context)
+
+        server.ehlo()
+
+        server.login(
+            MAIL_USERNAME,
+            MAIL_PASSWORD
+        )
+
+        server.sendmail(
+            MAIL_DEFAULT_SENDER,
+            email,
+            msg.as_string()
+        )
+
     except Exception as e:
         import traceback
 
@@ -1486,7 +1504,7 @@ def forgot_password():
 
         return jsonify({
             "success": False,
-            "message": repr(e)
+            "message": str(e)
         }), 500
 
     add_notification(
