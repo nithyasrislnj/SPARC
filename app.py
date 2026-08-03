@@ -6,6 +6,7 @@ import os
 import random
 import smtplib
 import ssl
+import requests
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -30,6 +31,7 @@ CORS(app)
 
 # EMAIL CONFIGURATION (BREVO)
 SECRET_KEY = os.getenv("SECRET_KEY")
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
 MAIL_SERVER = os.getenv("MAIL_SERVER")
 MAIL_PORT = int(os.getenv("MAIL_PORT"))
@@ -1473,50 +1475,49 @@ def forgot_password():
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        print("Connecting to:", MAIL_SERVER)
-        print("Port:", MAIL_PORT)
-        print("Username:", MAIL_USERNAME)
-        print("Recipient:", email)
+        headers = {
+            "accept": "application/json",
+            "api-key": BREVO_API_KEY,
+            "content-type": "application/json"
+        }
 
-        context = ssl.create_default_context()
+        payload = {
+            "sender": {
+                "email": MAIL_DEFAULT_SENDER,
+                "name": "SPARC"
+            },
 
-        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=60) as server:
-            server.set_debuglevel(1)
+            "to": [
+                {
+                    "email": email
+                }
+            ],
 
-            server.ehlo()
-            print("EHLO OK")
+            "subject": "SPARC Password Reset OTP",
 
-            server.starttls(context=context)
-            print("TLS OK")
+            "textContent": body
+        }
 
-            server.ehlo()
-            print("EHLO AFTER TLS OK")
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
 
-            server.login(
-                MAIL_USERNAME,
-                MAIL_PASSWORD
-            )
-            print("LOGIN OK")
+        response.raise_for_status()
 
-            server.sendmail(
-                MAIL_DEFAULT_SENDER,
-                email,
-                msg.as_string()
-            )
-            print("EMAIL SENT")
+        print("EMAIL SENT SUCCESSFULLY")
 
     except Exception as e:
         import traceback
 
-        print("\n========== MAIL ERROR ==========")
         traceback.print_exc()
-        print("Exception:", repr(e))
-        print("================================\n")
 
         return jsonify({
             "success": False,
             "message": str(e)
-        }), 500
+        }),500
 
     add_notification(
         email,
