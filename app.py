@@ -39,12 +39,12 @@ MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
 MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
 
-print("MAIL_SERVER =", app.config["MAIL_SERVER"])
-print("MAIL_PORT =", app.config["MAIL_PORT"])
-print("MAIL_USERNAME =", app.config["MAIL_USERNAME"])
-print("MAIL_DEFAULT_SENDER =", app.config["MAIL_DEFAULT_SENDER"])
-print("MAIL_PASSWORD EXISTS =", bool(app.config["MAIL_PASSWORD"]))
-print("MAIL_PASSWORD LENGTH =", len(app.config["MAIL_PASSWORD"]) if app.config["MAIL_PASSWORD"] else 0)
+print("MAIL_SERVER =", MAIL_SERVER)
+print("MAIL_PORT =", MAIL_PORT)
+print("MAIL_USERNAME =", MAIL_USERNAME)
+print("MAIL_DEFAULT_SENDER =", MAIL_DEFAULT_SENDER)
+print("MAIL_PASSWORD EXISTS =", bool(MAIL_PASSWORD))
+print("MAIL_PASSWORD LENGTH =", len(MAIL_PASSWORD) if MAIL_PASSWORD else 0)
 
 
 import string
@@ -1473,26 +1473,36 @@ def forgot_password():
     msg.attach(MIMEText(body, "plain"))
 
     try:
+        print("Connecting to:", MAIL_SERVER)
+        print("Port:", MAIL_PORT)
+        print("Username:", MAIL_USERNAME)
+        print("Recipient:", email)
+
         context = ssl.create_default_context()
 
-        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=20) as server:
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=60) as server:
 
-        server.ehlo()
+            server.ehlo()
+            print("EHLO OK")
 
-        server.starttls(context=context)
+            server.starttls(context=context)
+            print("TLS OK")
 
-        server.ehlo()
+            server.ehlo()
+            print("EHLO AFTER TLS OK")
 
-        server.login(
-            MAIL_USERNAME,
-            MAIL_PASSWORD
-        )
+            server.login(
+                MAIL_USERNAME,
+                MAIL_PASSWORD
+            )
+            print("LOGIN OK")
 
-        server.sendmail(
-            MAIL_DEFAULT_SENDER,
-            email,
-            msg.as_string()
-        )
+            server.sendmail(
+                MAIL_DEFAULT_SENDER,
+                email,
+                msg.as_string()
+            )
+            print("EMAIL SENT")
 
     except Exception as e:
         import traceback
