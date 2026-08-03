@@ -1481,6 +1481,7 @@ def forgot_password():
         context = ssl.create_default_context()
 
         with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=60) as server:
+            server.set_debuglevel(1)
 
             server.ehlo()
             print("EHLO OK")
