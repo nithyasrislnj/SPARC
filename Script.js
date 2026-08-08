@@ -213,9 +213,10 @@ function closeLogin(){
 }
 
 
-document
-.getElementById("loginForm")
-.addEventListener("submit", async(e)=>{
+const loginForm = document.getElementById("loginForm");
+
+if(loginForm){
+loginForm.addEventListener("submit", async(e)=>{
 
   e.preventDefault();
 
@@ -327,11 +328,14 @@ document
     );
   }
 });
+}
 
 /* Registration Logic */
-document
-.getElementById("registerForm")
-.addEventListener("submit", async(e)=>{
+/* Registration Logic */
+const registerForm = document.getElementById("registerForm");
+
+if(registerForm){
+registerForm.addEventListener("submit", async(e)=>{
 
   e.preventDefault();
 
@@ -407,6 +411,7 @@ document
   }
 
 });
+}
 
 
 /* Logged-in Role */
@@ -927,33 +932,38 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* LOGIN BUTTON / PROFILE BUTTON */
+/* LOGIN / PROFILE BUTTON */
 window.addEventListener("DOMContentLoaded", () => {
     const loginBtn = document.getElementById("loginBtn");
     const profileBtn = document.getElementById("profileBtn");
 
-    if(!loginBtn || !profileBtn)
+    if(!profileBtn)
         return;
 
     const token = localStorage.getItem("token");
     const name = localStorage.getItem("name");
 
     if(token && name){
-        // Hide Login button
-        loginBtn.style.display = "none";
-
-        // Show logged-in person's name
+        /* Show logged-in person's name */
         profileBtn.style.display = "inline-block";
 
         profileBtn.innerHTML =
-        "👤 " + localStorage.getItem("name");
+            "👤 " + name;
+
+        /* Hide Login button if this page has one */
+        if(loginBtn){
+            loginBtn.style.display = "none";
+        }
     }
 
     else{
-        // Show Login button
-        loginBtn.style.display = "inline-block";
-        // Hide Profile/Name button
+        /* Hide profile button */
         profileBtn.style.display = "none";
+
+        /* Show Login button on pages that have one */
+        if(loginBtn){
+            loginBtn.style.display = "inline-block";
+        }
     }
 });
 
