@@ -163,11 +163,6 @@ async function resendOTP(){
 }
 
 
-/* Join Volunteer */
-function joinVolunteer(){
-    openRegister(true);
-}
-
 /* EXPLORE PLATFORM */
 function explorePlatform(){
     window.location.href = "how-sparc-works.html";
