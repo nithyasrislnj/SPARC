@@ -936,10 +936,13 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
 
     const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
 
-    if(token){
+    if(token && name){
+        // Hide Login button
         loginBtn.style.display = "none";
 
+        // Show logged-in person's name
         profileBtn.style.display = "inline-block";
 
         profileBtn.innerHTML =
@@ -947,7 +950,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     else{
+        // Show Login button
         loginBtn.style.display = "inline-block";
+        // Hide Profile/Name button
         profileBtn.style.display = "none";
     }
 });
