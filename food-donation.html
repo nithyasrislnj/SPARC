@@ -196,6 +196,59 @@
         </button>
 
       </div>
+      <!-- =========================================
+       VOLUNTEER DONATION MANAGEMENT
+       ========================================= -->
+      <div id="volunteerDonationSection"
+        style="display:none;">
+        <!-- AVAILABLE DONATIONS -->
+        <div class="text-center section-margin">
+
+          <h2 class="section-title">
+            Available Donations
+          </h2>
+
+          <p class="section-subtitle">
+            Take responsibility for a food donation
+            and help deliver it to someone in need.
+          </p>
+
+        </div>
+
+        <div id="availableDonations"
+          class="donation-cards-container">
+
+          <p class="donation-empty">
+            Loading available donations...
+          </p>
+        </div>
+
+
+        <!-- MY DONATIONS -->
+        <div class="text-center section-margin"
+          style="margin-top:60px;">
+
+          <h2 class="section-title">
+            My Donations
+          </h2>
+
+          <p class="section-subtitle">
+            Track the donations you have taken
+            responsibility for.
+          </p>
+
+        </div>
+
+
+        <div id="myDonations"
+          class="donation-cards-container">
+
+          <p class="donation-empty">
+            Loading your donations...
+          </p>
+
+        </div>
+      </div>
     </div>
   </section>
 
@@ -316,6 +369,10 @@
 
   <script src="config.js"></script>
   <script src="Script.js"></script>
+
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://upload-widget.cloudinary.com/latest/global/all.js"></script>
+
   <script src="food-donation.js"></script>
 
 </body>

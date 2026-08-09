@@ -202,8 +202,20 @@ function closeRegister(){
 
 /* LOGIN */
 function openLogin(){
-  document.getElementById("loginModal").style.display="flex";
+    const loginModal =
+        document.getElementById("loginModal");
+
+    loginModal.style.display = "flex";
+
+    const roleDropdown =
+        document.getElementById("role");
+
+    if(roleDropdown){
+        roleDropdown.disabled = false;
+        roleDropdown.selectedIndex = 0;
+    }
 }
+
 
 function closeLogin(){
     if(window.location.pathname.includes("login.html"))
