@@ -66,9 +66,10 @@ def cloudinary_sign():
         }), 400
 
     params_to_sign = {
+        "folder": "sparc/donation_proofs",
+        "source": "uw",
         "timestamp": timestamp,
-        "upload_preset": "sparc_donation_proof",
-        "folder": "sparc/donation_proofs"
+        "upload_preset": "sparc_donation_proof"
     }
 
     signature = api_sign_request(
