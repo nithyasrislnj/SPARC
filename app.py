@@ -57,34 +57,68 @@ from datetime import datetime, timedelta
 # CLOUDINARY SIGNED UPLOAD
 @app.route('/api/cloudinary/sign', methods=['POST'])
 def cloudinary_sign():
-    timestamp = request.json.get("timestamp")
+    try:
+        data = request.get_json(silent=True) or {}
 
-    if not timestamp:
+        timestamp = data.get("timestamp")
+
+        if not timestamp:
+            return jsonify({
+                "success": False,
+                "message": "Timestamp is required."
+            }), 400
+
+        # Make sure Render has the Cloudinary credentials
+        if not CLOUDINARY_CLOUD_NAME:
+            return jsonify({
+                "success": False,
+                "message": "Cloudinary cloud name is not configured."
+            }), 500
+
+        if not CLOUDINARY_API_KEY:
+            return jsonify({
+                "success": False,
+                "message": "Cloudinary API key is not configured."
+            }), 500
+
+        if not CLOUDINARY_API_SECRET:
+            return jsonify({
+                "success": False,
+                "message": "Cloudinary API secret is not configured."
+            }), 500
+
+        params_to_sign = {
+            "folder": "sparc/donation_proofs",
+            "source": "uw",
+            "timestamp": timestamp,
+            "upload_preset": "sparc_donation_proof"
+        }
+
+        signature = api_sign_request(
+            params_to_sign,
+            CLOUDINARY_API_SECRET
+        )
+
+        return jsonify({
+            "success": True,
+            "signature": signature,
+            "timestamp": timestamp,
+            "api_key": CLOUDINARY_API_KEY,
+            "cloud_name": CLOUDINARY_CLOUD_NAME,
+            "upload_preset": "sparc_donation_proof"
+        })
+
+    except Exception as error:
+        print(
+            "Cloudinary signature error:",
+            str(error)
+        )
+
         return jsonify({
             "success": False,
-            "message": "Timestamp is required."
-        }), 400
+            "message": "Unable to generate Cloudinary upload signature."
+        }), 500
 
-    params_to_sign = {
-        "folder": "sparc/donation_proofs",
-        "source": "uw",
-        "timestamp": timestamp,
-        "upload_preset": "sparc_donation_proof"
-    }
-
-    signature = api_sign_request(
-        params_to_sign,
-        CLOUDINARY_API_SECRET
-    )
-
-    return jsonify({
-        "success": True,
-        "signature": signature,
-        "timestamp": timestamp,
-        "api_key": CLOUDINARY_API_KEY,
-        "cloud_name": CLOUDINARY_CLOUD_NAME,
-        "upload_preset": "sparc_donation_proof"
-    })
 
 
 # Store OTP with expiry

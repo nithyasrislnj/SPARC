@@ -591,22 +591,23 @@ function createMyDonationCard(
     }
 
     else if (
-      status === "Out for Delivery"
+        status === "Out for Delivery"
     ) {
-      actionButton = `
-        <button
-            class="primary-btn donation-action-btn"
-            onclick="openCompletionForm(
-                ${donation.id}
-            )">
+        actionButton = `
+            <button
+                id="completeDonationBtn-${donation.id}"
+                class="primary-btn donation-action-btn"
+                onclick="openCompletionForm(
+                    ${donation.id}
+                )">
 
-            <span class="material-symbols-outlined">
-                check_circle
-            </span>
+                <span class="material-symbols-outlined">
+                    check_circle
+                </span>
 
-            Complete Donation
-        </button>
-      `;
+                Complete Donation
+            </button>
+        `;
     }
 
     else if (status === "Completed") {
@@ -987,6 +988,32 @@ function escapeDonationText(
 // ==========================================
 // OPEN COMPLETION FORM
 async function openCompletionForm(donationId) {
+    // Prevent multiple completion forms
+    const existingForm =
+        document.getElementById(
+            `completionForm-${donationId}`
+        );
+
+    if (existingForm) {
+        existingForm.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+        return;
+    }
+
+    // Disable the Complete Donation button
+    const completeButton =
+        document.getElementById(
+            `completeDonationBtn-${donationId}`
+        );
+
+    if (completeButton) {
+        completeButton.disabled = true;
+        completeButton.style.opacity = "0.6";
+        completeButton.style.cursor = "not-allowed";
+    }
+
     try {
         const response =
             await fetch(
@@ -1060,10 +1087,14 @@ async function openCompletionForm(donationId) {
 
                 <select
                     id="beneficiary-${donationId}"
-                    required>
+                    required
+                    onchange="updateDonationCompletionButton(
+                    ${donationId})">
+
                     <option value="">
                         Select a beneficiary
                     </option>
+
                     ${beneficiaryOptions}
                 </select>
 
@@ -1100,7 +1131,10 @@ async function openCompletionForm(donationId) {
                 <textarea
                     id="completionNotes-${donationId}"
                     rows="4"
-                    placeholder="Describe the donation delivery...">
+                    placeholder="Describe the donation delivery..."
+                    required
+                    oninput="updateDonationCompletionButton(
+                    ${donationId})">
                 </textarea>
 
                 <div
@@ -1116,10 +1150,12 @@ async function openCompletionForm(donationId) {
 
                     <button
                         type="button"
+                        id="donationSuccessfulBtn-${donationId}"
                         class="primary-btn"
                         onclick="submitDonationCompletion(
                             ${donationId}
-                        )">
+                        )"
+                        disabled>
 
                         Donation Successful
 
@@ -1149,6 +1185,93 @@ async function openCompletionForm(donationId) {
             "Unable to load beneficiaries."
         );
     }
+}
+
+
+// ==========================================
+// UPDATE DONATION COMPLETION BUTTON
+function updateDonationCompletionButton(
+    donationId
+) {
+    const beneficiaryElement =
+        document.getElementById(
+            `beneficiary-${donationId}`
+        );
+
+    const notesElement =
+        document.getElementById(
+            `completionNotes-${donationId}`
+        );
+
+    const submitButton =
+        document.getElementById(
+            `donationSuccessfulBtn-${donationId}`
+        );
+
+    if (
+        !beneficiaryElement ||
+        !notesElement ||
+        !submitButton
+    ) {
+        return;
+    }
+
+    const beneficiary =
+        beneficiaryElement.value.trim();
+
+    const notes =
+        notesElement.value.trim();
+
+    const proofPhoto =
+        donationProofPhotos[
+            donationId
+        ];
+
+    const ready =
+        beneficiary &&
+        notes &&
+        proofPhoto;
+
+    submitButton.disabled = !ready;
+
+    if (ready) {
+        submitButton.style.opacity = "1";
+        submitButton.style.cursor = "pointer";
+    } else {
+        submitButton.style.opacity = "0.6";
+        submitButton.style.cursor = "not-allowed";
+    }
+}
+
+
+// ==========================================
+// CLOSE COMPLETION FORM
+function closeCompletionForm(
+    donationId
+) {
+    const form =
+        document.getElementById(
+            `completionForm-${donationId}`
+        );
+
+    if (form) {
+        form.remove();
+    }
+
+    const completeButton =
+        document.getElementById(
+            `completeDonationBtn-${donationId}`
+        );
+
+    if (completeButton) {
+        completeButton.disabled = false;
+        completeButton.style.opacity = "1";
+        completeButton.style.cursor = "pointer";
+    }
+
+    delete donationProofPhotos[
+        donationId
+    ];
 }
 
 
@@ -1390,6 +1513,12 @@ async function openProofUploader(donationId) {
                         donationProofPhotos[
                             donationId
                         ] = imageUrl;
+
+                        // Enable Donation Successful
+                        // if all required details are filled
+                        updateDonationCompletionButton(
+                            donationId
+                        );
 
                         // Show preview
                         const preview =
