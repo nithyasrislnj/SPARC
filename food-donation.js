@@ -164,29 +164,37 @@ async function submitDonation() {
 
 
 // ==========================================
-// INITIALIZE FOOD DONATION PAGE
+// INITIALIZE FOOD DONATION MODULE
 document.addEventListener(
     "DOMContentLoaded",
     function () {
-
         const role =
             localStorage.getItem("role");
 
-        // Only Volunteers get the
-        // donation-management section.
-        if (role === "Volunteer") {
-
-            const section =
+        // ADMIN
+        if (role === "Admin") {
+            const adminAction =
                 document.getElementById(
-                    "volunteerDonationSection"
+                    "adminFoodDonationAction"
                 );
 
-            if (section) {
-                section.style.display = "block";
+            if (adminAction) {
+                adminAction.style.display =
+                    "block";
             }
+        }
 
-            loadAvailableDonations();
-            loadMyDonations();
+        // VOLUNTEER
+        if (role === "Volunteer") {
+            const volunteerActions =
+                document.getElementById(
+                    "volunteerFoodDonationActions"
+                );
+
+            if (volunteerActions) {
+                volunteerActions.style.display =
+                    "block";
+            }
         }
     }
 );
@@ -207,7 +215,9 @@ async function loadAvailableDonations() {
 
         const response =
             await fetch(
-                `${API_BASE_URL}/get_available_donations`
+                `${API_BASE_URL}/get_available_donations?email=${encodeURIComponent(
+                    localStorage.getItem("email")
+                )}`
             );
 
         if (!response.ok) {
@@ -726,12 +736,10 @@ function createMyDonationCard(
 async function pickDonation(
     donationId
 ) {
-
     const email =
         localStorage.getItem("email");
 
     if (!email) return;
-
 
     const confirmed =
         confirm(
@@ -744,9 +752,7 @@ async function pickDonation(
         return;
     }
 
-
     try {
-
         const response =
             await fetch(
                 `${API_BASE_URL}/pick_donation/${donationId}`,
@@ -764,13 +770,10 @@ async function pickDonation(
                 }
             );
 
-
         const data =
             await response.json();
 
-
         if (!response.ok) {
-
             alert(
                 data.message ||
                 "Unable to update donation."
@@ -779,14 +782,13 @@ async function pickDonation(
             return;
         }
 
-
         alert(data.message);
 
-        loadAvailableDonations();
         loadMyDonations();
+        loadAvailableDonations();
 
-    } catch (error) {
-
+    } 
+    catch (error) {
         console.error(
             "Pick donation error:",
             error
@@ -862,6 +864,7 @@ async function startDelivery(
 
         loadAvailableDonations();
         loadMyDonations();
+
 
     } catch (error) {
 
@@ -1035,6 +1038,12 @@ async function openCompletionForm(donationId) {
                 "No available beneficiaries found."
             );
 
+            if (completeButton) {
+                completeButton.disabled = false;
+                completeButton.style.opacity = "1";
+                completeButton.style.cursor = "pointer";
+            }
+
             return;
         }
 
@@ -1175,11 +1184,18 @@ async function openCompletionForm(donationId) {
                 block: "center"
             });
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.error(
             "Beneficiary loading error:",
             error
         );
+
+        if (completeButton) {
+            completeButton.disabled = false;
+            completeButton.style.opacity = "1";
+            completeButton.style.cursor = "pointer";
+        }
 
         alert(
             "Unable to load beneficiaries."

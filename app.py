@@ -575,9 +575,55 @@ def get_donations():
 # AVAILABLE FOOD DONATIONS
 @app.route('/get_available_donations', methods=['GET'])
 def get_available_donations():
+
+    volunteer_email = request.args.get("email")
+
+    if not volunteer_email:
+        return jsonify({
+            "success": False,
+            "message": "Volunteer email is required."
+        }), 400
+
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
+    # VERIFY VOLUNTEER
+    cursor.execute("""
+        SELECT role, status
+        FROM users
+        WHERE email=%s
+    """, (volunteer_email,))
+
+    volunteer = cursor.fetchone()
+
+    if not volunteer:
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "User account not found."
+        }), 404
+
+    if volunteer["role"] != "Volunteer":
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "Only volunteers can view available donations."
+        }), 403
+
+    if volunteer["status"] != "Active":
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "Volunteer account is not active."
+        }), 403
+
+    # GET AVAILABLE DONATIONS
     cursor.execute("""
         SELECT
             id,
@@ -601,14 +647,17 @@ def get_available_donations():
 
     for donation in donations:
         if donation["expiry_time"]:
-            donation["expiry_time"] = donation["expiry_time"].strftime(
-                "%Y-%m-%dT%H:%M:%S"
+            donation["expiry_time"] = (
+                donation["expiry_time"]
+                .strftime("%Y-%m-%dT%H:%M:%S")
             )
 
         if donation["created_at"]:
-            donation["created_at"] = donation["created_at"].strftime(
-                "%Y-%m-%dT%H:%M:%S"
+            donation["created_at"] = (
+                donation["created_at"]
+                .strftime("%Y-%m-%dT%H:%M:%S")
             )
+
     return jsonify(donations)
 
 
@@ -618,6 +667,41 @@ def get_available_donations():
 def get_my_donations(email):
     db = get_db()
     cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT role, status
+        FROM users
+        WHERE email=%s
+    """, (email,))
+
+    volunteer = cursor.fetchone()
+
+    if not volunteer:
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "User account not found."
+        }), 404
+
+    if volunteer["role"] != "Volunteer":
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "Only volunteers can view their donations."
+        }), 403
+
+    if volunteer["status"] != "Active":
+        cursor.close()
+        db.close()
+
+        return jsonify({
+            "success": False,
+            "message": "Volunteer account is not active."
+        }), 403
 
     cursor.execute("""
         SELECT
