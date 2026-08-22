@@ -168,34 +168,66 @@ async function submitDonation() {
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
         const role =
             localStorage.getItem("role");
 
-        // ADMIN
-        if (role === "Admin") {
-            const adminAction =
-                document.getElementById(
-                    "adminFoodDonationAction"
-                );
+        // ======================================
+        // MAIN FOOD DONATION PAGE
+        const adminAction =
+            document.getElementById(
+                "adminFoodDonationAction"
+            );
 
-            if (adminAction) {
-                adminAction.style.display =
-                    "block";
-            }
+        if (
+            role === "Admin" &&
+            adminAction
+        ) {
+            adminAction.style.display =
+                "block";
         }
 
-        // VOLUNTEER
-        if (role === "Volunteer") {
-            const volunteerActions =
-                document.getElementById(
-                    "volunteerFoodDonationActions"
-                );
+        const volunteerActions =
+            document.getElementById(
+                "volunteerFoodDonationActions"
+            );
 
-            if (volunteerActions) {
-                volunteerActions.style.display =
-                    "block";
-            }
+        if (
+            role === "Volunteer" &&
+            volunteerActions
+        ) {
+            volunteerActions.style.display =
+                "block";
         }
+
+        // ======================================
+        // AVAILABLE DONATIONS PAGE
+        const availableContainer =
+            document.getElementById(
+                "availableDonations"
+            );
+
+        if (
+            role === "Volunteer" &&
+            availableContainer
+        ) {
+            loadAvailableDonations();
+        }
+
+        // ======================================
+        // MY DONATIONS PAGE
+        const myDonationsContainer =
+            document.getElementById(
+                "myDonations"
+            );
+
+        if (
+            role === "Volunteer" &&
+            myDonationsContainer
+        ) {
+            loadMyDonations();
+        }
+
     }
 );
 
