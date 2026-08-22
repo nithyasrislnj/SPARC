@@ -459,17 +459,12 @@ function openDashboard(){
 */
 
 function openDashboard(){
-
     if(!localStorage.getItem("token")){
-
-        window.location.href = "login.html";
-
+        window.location.href = "index.html";
         return;
 
     }
-
     window.location.href = "dashboard.html";
-
 }
 
 function logout(){
@@ -482,7 +477,7 @@ function logout(){
     localStorage.removeItem("darkMode");
     localStorage.removeItem("activeRole");
 
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 
@@ -490,9 +485,7 @@ function logout(){
 async function toggleProfileMenu(){
     if( !localStorage.getItem("token") )
       {
-        alert(
-          "Please Login First"
-        );
+        window.location.href = "index.html";
         return;
     }
 
@@ -946,7 +939,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* LOGIN / PROFILE BUTTON */
 window.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = document.getElementById("loginBtn");
     const profileBtn = document.getElementById("profileBtn");
 
     if(!profileBtn)
@@ -961,21 +953,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
         profileBtn.innerHTML =
             "👤 " + name;
-
-        /* Hide Login button if this page has one */
-        if(loginBtn){
-            loginBtn.style.display = "none";
-        }
     }
 
     else{
         /* Hide profile button */
         profileBtn.style.display = "none";
-
-        /* Show Login button on pages that have one */
-        if(loginBtn){
-            loginBtn.style.display = "inline-block";
-        }
     }
 });
 
@@ -1240,30 +1222,38 @@ async function resetPassword(){
 
 
 /* Auto-fill Email and Role*/
-window.addEventListener("DOMContentLoaded",()=>{
-    if(localStorage.getItem("rememberMe")==="true"){
+window.addEventListener("DOMContentLoaded", () => {
+    const emailInput =
+        document.getElementById("email");
 
-        const email =
-        localStorage.getItem("email");
+    const roleInput =
+        document.getElementById("role");
 
-        const role =
-        localStorage.getItem("role");
-
-        if(email){
-            document.getElementById("email").value =
-            email;
-        }
-
-        if(role){
-            document.getElementById("role").value =
-            role;
-        }
-
-        const remember =
+    const rememberInput =
         document.getElementById("rememberMe");
 
-        if(remember){
-            remember.checked = true;
+    // This code is only needed on login.html
+    if (!emailInput || !roleInput) {
+        return;
+    }
+
+    if (localStorage.getItem("rememberMe") === "true") {
+        const email =
+            localStorage.getItem("email");
+
+        const role =
+            localStorage.getItem("role");
+
+        if (email) {
+            emailInput.value = email;
+        }
+
+        if (role) {
+            roleInput.value = role;
+        }
+
+        if (rememberInput) {
+            rememberInput.checked = true;
         }
     }
 });

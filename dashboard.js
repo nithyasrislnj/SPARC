@@ -709,7 +709,7 @@ function openDashboard(){
     const role = localStorage.getItem("role");
 
     if(!role){
-        alert("Please Login First");
+        window.location.href = "index.html";
         return;
     }
 
@@ -747,12 +747,7 @@ window.addEventListener("load", ()=>{
     localStorage.getItem("activeRole");
    
     if(!loginRole){
-
-        alert("Please Login First");
-
-        window.location.href =
-        "Sparc.html";
-
+        window.location.href = "index.html";
         return;
     }
 

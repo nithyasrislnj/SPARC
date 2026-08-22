@@ -19,7 +19,7 @@
 
 <script>
   if (!localStorage.getItem("token")) {
-    window.location.replace("login.html");
+    window.location.replace("index.html");
   }
 </script>
 
@@ -45,12 +45,12 @@
         <a href="impact.html">Impact</a>
       </nav>
 
-      <button
+      <!-- <button
         id="loginBtn"
         class="primary-btn"
         onclick="openLogin()">
         Login
-      </button>
+      </button> -->
 
       <button
         id="profileBtn"
@@ -218,7 +218,7 @@
     </div>
   </section>
 
-  <!-- Login Module -->
+  <!-- Login Module 
   <div class="login-modal" id="loginModal">
     <div class="login-box">
       <span class="close-btn" onclick="closeLogin()">
@@ -260,14 +260,6 @@
           Login
         </button>
 
-        <!-- <button
-          type="button"
-          class="outline-btn login-btn"
-          onclick="openRegister()"
-          style="margin-top:10px;">
-          Create Account
-        </button> -->
-
         <p style="text-align:center;margin-top:15px;">
           Don't have an account?
           <a href="#" onclick="openRegister()">
@@ -278,9 +270,9 @@
       </form>
       <p id="message"></p>
     </div>
-  </div>
+  </div> -->
 
-  <!-- Registration -->
+  <!-- Registration 
   <div class="login-modal" id="registerModal">
     <div class="login-box">
       <span
@@ -331,7 +323,7 @@
 
     </div>
   </div>
-</div>
+</div> -->
 
 <script src="config.js"></script>
 <script src="Script.js"></script>

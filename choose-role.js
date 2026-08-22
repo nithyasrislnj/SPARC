@@ -5,8 +5,7 @@ function selectRole(role){
     const loginRole = localStorage.getItem("role");
 
     if(!loginRole){
-        alert("Please Login First");
-        openLogin();
+        window.location.href = "index.html";
         return;
     }
 

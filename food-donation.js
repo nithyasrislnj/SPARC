@@ -409,11 +409,7 @@ async function takeDonation(
         localStorage.getItem("email");
 
     if (!volunteerEmail) {
-
-        alert(
-            "Please login before taking responsibility."
-        );
-
+        window.location.href = "index.html";
         return;
     }
 
@@ -498,29 +494,19 @@ async function loadMyDonations() {
 
     if (!container) return;
 
-
     const email =
         localStorage.getItem("email");
 
     if (!email) {
-
-        container.innerHTML = `
-            <div class="donation-empty">
-                Please login to view your donations.
-            </div>
-        `;
-
+        window.location.href = "index.html";
         return;
     }
 
-
     try {
-
         const response =
             await fetch(
                 `${API_BASE_URL}/get_my_donations/${encodeURIComponent(email)}`
             );
-
 
         if (!response.ok) {
             throw new Error(
@@ -528,16 +514,12 @@ async function loadMyDonations() {
             );
         }
 
-
         const donations =
             await response.json();
 
-
         if (!donations.length) {
-
             container.innerHTML = `
                 <div class="donation-empty">
-
                     <span class="material-symbols-outlined">
                         inventory
                     </span>
@@ -546,13 +528,10 @@ async function loadMyDonations() {
                         You haven't taken responsibility
                         for any donations yet.
                     </p>
-
                 </div>
             `;
-
             return;
         }
-
 
         container.innerHTML =
             donations.map(
