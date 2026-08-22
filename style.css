@@ -1941,18 +1941,27 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      border: 2px solid currentColor;
+
+      /* Incomplete step */
+      border: 2px solid #d1d5db;
+      background: #ffffff;
+      color: transparent;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
+
       font-size: 12px;
+      font-weight: 700;
+
       flex-shrink: 0;
     }
 
-    .progress-step.completed
-    .progress-dot {
-      background: currentColor;
-      color: white;
+    /* Completed step */
+    .progress-step.completed .progress-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
     }
 
     .donation-completed {
@@ -1989,7 +1998,7 @@
       }
     }
 
-
+    
     /* ==========================================
     DONATION COMPLETION FORM */
     .completion-form {
@@ -2144,4 +2153,86 @@
       justify-content: center;
       text-decoration: none;
       margin-top: 6px;
+    }
+
+    /* ==========================================
+    MY DONATIONS NAVIGATION BUTTONS */
+    .donation-navigation-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* Back to Food Donation */
+    .donation-back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .donation-back-btn:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 122, 47, 0.18);
+    }
+
+    /* Available Donations */
+    .donation-available-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: var(--primary);
+      color: white;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .donation-available-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 122, 47, 0.18);
+    }
+
+    /* ==========================================
+    MOBILE
+    ========================================== */
+    @media (max-width: 600px) {
+      .donation-navigation-actions {
+        width: 94%;
+        margin: 30px auto 0;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .donation-back-btn,
+      .donation-available-btn {
+        width: 100%;
+        max-width: 360px;
+        padding: 13px 18px;
+        font-size: 15px;
+      }
     }
