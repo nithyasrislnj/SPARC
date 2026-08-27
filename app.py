@@ -6988,6 +6988,7 @@ def start_location_session():
 
     cursor.execute("""
         SELECT
+            id,
             email,
             role,
             status
