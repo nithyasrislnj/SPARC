@@ -3320,7 +3320,6 @@ async function loadMyAssignments(){
 // ============================================================
 // RENDER ASSIGNMENTS
 // ============================================================
-
 function renderAssignments(
     assignments
 ){
@@ -3330,13 +3329,9 @@ function renderAssignments(
             "assignmentsContainer"
         );
 
-
     if(assignments.length === 0){
-
         container.innerHTML = `
-
             <div class="job-empty-state">
-
                 <span class="material-symbols-outlined">
                     assignment
                 </span>
@@ -3348,46 +3343,33 @@ function renderAssignments(
                 <p>
                     Accepted job offers will appear here.
                 </p>
-
             </div>
-
         `;
-
         return;
-
     }
-
 
     container.innerHTML =
         "";
 
-
     assignments.forEach(
         assignment => {
-
             const card =
                 document.createElement(
                     "div"
                 );
 
-
             card.className =
                 "applicant-card";
-
 
             const role =
                 localStorage.getItem(
                     "role"
                 );
 
-
             let personDetails = "";
 
-
             if(role === "Employer"){
-
                 personDetails = `
-
                     <p>
                         👤
                         <strong>Beneficiary:</strong>
@@ -3660,6 +3642,34 @@ function renderAssignments(
                     }
 
 
+                    ${
+                        (
+                            role === "Volunteer" ||
+                            role === "NGO"
+                        ) &&
+                        assignment.status === "ASSIGNED"
+                            ? `
+                                <div class="applicant-actions">
+
+                                    <button
+                                        class="secondary-btn"
+                                        onclick="openAssistedAssignmentLocation(
+                                            ${assignment.assignment_id}
+                                        )">
+
+                                        <span class="material-symbols-outlined">
+                                            location_on
+                                        </span>
+
+                                        Start Assistance Location
+
+                                    </button>
+                                </div>
+                            `
+                            : ""
+                    }
+
+
                     <p>
                         ✅
                         <strong>Accepted:</strong>
@@ -3764,6 +3774,7 @@ async function startWorkSession(assignmentId) {
         );
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
     }
@@ -5729,6 +5740,35 @@ function closeLocationSharingModal(){
         "locationSharingModal"
     ).style.display =
         "none";
+}
+
+
+function openAssistedAssignmentLocation(
+    assignmentId
+){
+    window.currentAssignmentId =
+        assignmentId;
+
+    selectedLocationAssignmentId =
+        assignmentId;
+
+    selectedLocationPurpose =
+        "ASSISTED_VISIT";
+
+    document.getElementById(
+        "locationSharingModal"
+    ).style.display =
+        "flex";
+
+    document.getElementById(
+        "locationSharingMessage"
+    ).textContent =
+        "Your location will be shared only while you are assisting the beneficiary.";
+
+    document.getElementById(
+        "locationStatus"
+    ).textContent =
+        "Location sharing is not active.";
 }
 
 
