@@ -147,6 +147,7 @@
 
 <div id="mainContent">
   <!-- JOB SECTION -->
+  <!--
   <section id="jobs" class="section-padding white-section">
     <div class="container">
 
@@ -186,8 +187,10 @@
       </div>
     </div>
   </section>
+  -->
        
   <!-- Job Application -->
+  <!--
   <div class="login-modal" id="jobApplyModal">
     <div class="login-box">
         <span class="close-btn" onclick="closeJobModal()">
@@ -216,8 +219,10 @@
         </button>
     </div>
   </div>
+  -->
 
   <!-- Job Application Success Popup -->
+  <!--
   <div id="jobPopup" class="success-popup">
     <div class="success-popup-box">
         <div class="success-popup-icon">✓</div>
@@ -227,7 +232,926 @@
         <button onclick="closeJobPopup()"> OK </button>
     </div>
   </div>
+  -->
 
+    <!-- ============================================================
+    SPARC LIVELIHOODS -->
+    <section id="jobs" class="section-padding white-section">
+      <div class="container">
+        <div class="text-center section-margin">
+          <h2 class="section-title">
+          SPARC Livelihoods
+          </h2>
+
+          <p class="section-subtitle">
+          Find opportunities that support immediate income
+          and long-term livelihood growth.
+          </p>
+        </div>
+
+        <!-- ======================================================
+        LIVELIHOOD PATHWAYS -->
+        <div class="livelihood-pathways">
+          <button
+            class="livelihood-path active"
+            id="immediateIncomeBtn"
+            onclick="showLivelihoodPath('IMMEDIATE_INCOME')">
+
+            <span class="material-symbols-outlined">
+            payments
+            </span>
+
+            <div>
+              <h3>Immediate Income</h3>
+
+              <p>
+              Daily and short-term work opportunities
+              for people who need income now.
+              </p>
+            </div>
+          </button>
+
+          <button
+            class="livelihood-path"
+            id="careerGrowthBtn"
+            onclick="showLivelihoodPath('CAREER_GROWTH')">
+            <span class="material-symbols-outlined">
+            trending_up
+            </span>
+
+            <div>
+              <h3>Career Growth</h3>
+
+              <p>
+              Skilled jobs, apprenticeships and
+              long-term employment opportunities.
+              </p>
+            </div>
+          </button>
+        </div>
+
+
+        <div
+        id="beneficiaryOfferControls"
+        class="job-role-controls"
+        style="display:none;">
+
+          <button
+          class="primary-btn"
+          onclick="loadMyJobOffers()">
+
+              <span class="material-symbols-outlined">
+              mail
+              </span>
+
+              My Job Offers
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadMyAssignments()">
+
+            <span class="material-symbols-outlined">
+            assignment
+            </span>
+
+            My Assignments
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadMyPayments()">
+
+            <span class="material-symbols-outlined">
+            payments
+            </span>
+
+            My Payments
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          id="beneficiaryLocationButton"
+          style="display:none;"
+          onclick="startBeneficiaryLocation()">
+
+            <span class="material-symbols-outlined">
+            location_on
+            </span>
+
+            I'm On My Way
+
+          </button>
+        </div>
+
+
+        <!-- ============================================================
+        ASSISTED JOB OFFER CONTROLS -->
+        <div
+        id="assistedOfferControls"
+        class="job-role-controls"
+        style="display:none;">
+          <button
+          class="secondary-btn"
+          onclick="loadAssistedJobOffers()">
+
+            <span class="material-symbols-outlined">
+            support_agent
+            </span>
+
+            Assisted Job Offers
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadAssistedPayments()">
+
+            <span class="material-symbols-outlined">
+            payments
+            </span>
+
+            Assisted Payments
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="startAssistanceLocation()">
+
+            <span class="material-symbols-outlined">
+            location_on
+            </span>
+
+            Start Assistance Location
+
+          </button>
+        </div>
+
+        <!-- ======================================================
+        EMPLOYER CONTROLS -->
+        <div
+          id="employerControls"
+          class="job-role-controls"
+          style="display:none;">
+
+          <button
+          class="primary-btn"
+          onclick="openPostJobModal()">
+            <span class="material-symbols-outlined">
+            add
+            </span>
+
+            Post a Job
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadEmployerApplications()">
+            <span class="material-symbols-outlined">
+            groups
+            </span>
+            View Applicants
+          </button>
+        </div>
+
+        <!-- ======================================================
+        ADMIN CONTROLS -->
+        <div
+          id="adminControls"
+          class="job-role-controls"
+          style="display:none;">
+
+          <button
+          class="secondary-btn"
+          onclick="loadAdminEmploymentOverview()">
+
+            <span class="material-symbols-outlined">
+            monitoring
+            </span>
+            Employment Monitoring
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadActiveLocations()">
+
+            <span class="material-symbols-outlined">
+            location_on
+            </span>
+
+            Active Locations
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadAssistedPayments()">
+
+            <span class="material-symbols-outlined">
+            support_agent
+            </span>
+
+            Assisted Payments
+
+          </button>
+        </div>
+
+
+        <button
+        class="secondary-btn"
+        onclick="loadMyAssignments()">
+
+          <span class="material-symbols-outlined">
+          assignment
+          </span>
+
+          My Assignments
+
+        </button>
+
+        <!-- ======================================================
+        JOB INFORMATION -->
+        <div class="job-toolbar">
+          <div>
+            <h3 id="jobPathTitle">
+            Immediate Income Opportunities
+            </h3>
+
+            <p id="jobPathDescription">
+            Nearby and short-term work opportunities.
+            </p>
+          </div>
+
+          <button
+          class="secondary-btn"
+          onclick="loadJobs()">
+            <span class="material-symbols-outlined">
+            refresh
+            </span>
+            Refresh
+          </button>
+        </div>
+
+        <!-- ======================================================
+        JOB LIST -->
+        <div
+        id="jobsContainer"
+        class="jobs-grid">
+          <div class="job-loading">
+          Loading opportunities...
+          </div>
+        </div>
+
+        <!-- ======================================================
+        EMPTY STATE -->
+        <div
+        id="jobsEmptyState"
+        class="job-empty-state"
+        style="display:none;">
+          <span class="material-symbols-outlined">
+          work_off
+          </span>
+
+          <h3>
+          No opportunities available
+          </h3>
+
+          <p>
+          There are currently no jobs available
+          in this pathway.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+    JOB DETAILS MODAL -->
+    <div
+    class="login-modal"
+    id="jobDetailsModal">
+      <div class="login-box job-details-box">
+        <span
+        class="close-btn"
+        onclick="closeJobDetails()">
+        ✕
+        </span>
+
+        <div id="jobDetailsContent"></div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    ADMIN ACTIVE LOCATIONS -->
+    <div
+    class="login-modal"
+    id="activeLocationsModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closeActiveLocationsModal()">
+            ✕
+        </span>
+
+        <h2>
+            Active Locations
+        </h2>
+
+        <p class="application-info">
+            Only users who have voluntarily
+            enabled location sharing are shown here.
+        </p>
+
+        <div
+            id="activeLocationsContainer">
+            Loading active locations...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    JOB APPLICATION MODAL -->
+    <div
+      class="login-modal"
+      id="jobApplyModal">
+      <div class="login-box job-details-box">
+        <span
+        class="close-btn"
+        onclick="closeJobModal()">
+        ✕
+        </span>
+
+        <h2>Apply for Job</h2>
+
+        <p id="applicationJobTitle"></p>
+
+        <!-- SELF ACCESS -->
+        <div id="selfApplicationArea">
+          <p class="application-info">
+          Your SPARC beneficiary profile will be
+          used for this application.
+          </p>
+
+          <button
+          class="primary-btn login-btn"
+          onclick="submitSelfApplication()">
+          Apply Now
+          </button>
+        </div>
+
+        <!-- ASSISTED ACCESS -->
+        <div
+        id="assistedApplicationArea"
+        style="display:none;">
+          <p class="application-info">
+
+          Apply on behalf of a registered beneficiary.
+
+          </p>
+
+          <label>
+          Select Beneficiary
+          </label>
+
+          <select id="assistedBeneficiarySelect">
+            <option value="">
+            Loading beneficiaries...
+            </option>
+          </select>
+
+          <button
+          class="primary-btn login-btn"
+          onclick="submitAssistedApplication()">
+          Submit Application
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+    POST JOB MODAL -->
+    <div
+    class="login-modal"
+    id="postJobModal">
+      <div class="login-box job-details-box">
+        <span
+        class="close-btn"
+        onclick="closePostJobModal()">
+        ✕
+        </span>
+
+        <h2>Post a Job</h2>
+
+        <input
+        type="text"
+        id="jobTitle"
+        placeholder="Job Title">
+
+        <textarea
+        id="jobDescription"
+        placeholder="Describe the work"></textarea>
+
+        <select id="jobLivelihoodPath">
+
+          <option value="IMMEDIATE_INCOME">
+          Immediate Income
+          </option>
+
+          <option value="CAREER_GROWTH">
+          Career Growth
+          </option>
+        </select>
+
+        <select id="jobWageType">
+          <option value="DAILY">
+          Daily Wage
+          </option>
+
+          <option value="HOURLY">
+          Hourly Wage
+          </option>
+
+          <option value="MONTHLY">
+          Monthly Salary
+          </option>
+
+          <option value="PROJECT">
+          Project Payment
+          </option>
+        </select>
+
+        <input
+        type="number"
+        id="jobWageAmount"
+        placeholder="Wage Amount"
+        min="0">
+
+        <input
+        type="number"
+        id="jobVacancies"
+        placeholder="Number of Vacancies"
+        min="1"
+        value="1">
+
+        <input
+        type="date"
+        id="jobWorkDate">
+
+        <div class="job-time-row">
+          <input
+          type="time"
+          id="jobStartTime">
+
+          <input
+          type="time"
+          id="jobEndTime">
+        </div>
+
+        <input
+        type="text"
+        id="jobLocation"
+        placeholder="Work Location">
+
+        <input
+        type="text"
+        id="jobMeetingPoint"
+        placeholder="Meeting Point">
+
+        <select id="jobPaymentCommitment">
+          <option value="END_OF_DAY">
+          Payment at End of Day
+          </option>
+
+          <option value="WITHIN_24_HOURS">
+          Payment Within 24 Hours
+          </option>
+
+          <option value="WEEKLY">
+          Weekly Payment
+          </option>
+
+          <option value="MONTHLY">
+          Monthly Payment
+          </option>
+
+          <option value="OTHER">
+          Other
+          </option>
+        </select>
+
+        <textarea
+        id="jobRequirements"
+        placeholder="Skills / Requirements"></textarea>
+
+        <button
+        class="primary-btn login-btn"
+        onclick="submitNewJob()">
+        Post Job
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+    APPLICANT MANAGEMENT MODAL -->
+    <div
+    class="login-modal"
+    id="applicantsModal">
+      <div class="login-box applicants-box">
+
+        <span
+        class="close-btn"
+        onclick="closeApplicantsModal()">
+        ✕
+        </span>
+
+        <h2>Job Applicants</h2>
+
+        <div id="applicantsContainer">
+          Loading applicants...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    BENEFICIARY JOB OFFERS -->
+    <div
+    class="login-modal"
+    id="jobOffersModal">
+
+      <div class="login-box applicants-box">
+        <span
+        class="close-btn"
+        onclick="closeJobOffersModal()">
+
+        ✕
+
+        </span>
+
+        <h2>
+        My Job Offers
+        </h2>
+
+        <div id="jobOffersContainer">
+        Loading offers...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    ASSISTED JOB OFFERS -->
+
+    <div
+    class="login-modal"
+    id="assistedJobOffersModal">
+
+      <div class="login-box applicants-box">
+        <span
+        class="close-btn"
+        onclick="closeAssistedJobOffersModal()">
+        ✕
+        </span>
+
+        <h2>
+        Assisted Job Offers
+        </h2>
+
+        <p class="application-info">
+
+        These offers belong to beneficiaries who
+        may not have direct smartphone access.
+
+        Please communicate the offer details to
+        the beneficiary before recording their response.
+
+        </p>
+
+        <div id="assistedJobOffersContainer">
+          Loading offers...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    JOB ASSIGNMENTS -->
+    <div
+    class="login-modal"
+    id="assignmentsModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closeAssignmentsModal()">
+            ✕
+        </span>
+
+        <h2>
+            Job Assignments
+        </h2>
+
+        <div
+            id="assignmentsContainer">
+            Loading assignments...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    PAYMENTS MODAL -->
+    <div
+    class="login-modal"
+    id="paymentsModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closePaymentsModal()">
+            ✕
+        </span>
+
+        <h2>
+            My Payments
+        </h2>
+
+        <div
+            id="paymentsContainer">
+            Loading payments...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    ASSISTED PAYMENTS MODAL -->
+    <div
+      class="login-modal"
+      id="assistedPaymentsModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closeAssistedPaymentsModal()">
+            ✕
+        </span>
+
+        <h2>
+            Assisted Payment Confirmation
+        </h2>
+
+        <p class="application-info">
+            These payments belong to beneficiaries
+            who may not have direct smartphone access.
+
+            Please communicate the payment details
+            to the beneficiary before recording
+            their confirmation.
+        </p>
+
+        <div
+            id="assistedPaymentsContainer">
+            Loading payments...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    LOCATION SHARING MODAL -->
+    <div
+    class="login-modal"
+    id="locationSharingModal">
+
+      <div class="login-box">
+        <span
+            class="close-btn"
+            onclick="closeLocationSharingModal()">
+            ✕
+        </span>
+
+        <h2>
+            Location Sharing
+        </h2>
+
+        <p id="locationSharingMessage">
+            Your location will only be shared
+            while this session is active.
+        </p>
+
+        <div
+            class="location-status"
+            id="locationStatus">
+
+            Location sharing is not active.
+
+        </div>
+
+        <div class="applicant-actions">
+            <button
+                class="primary-btn"
+                id="startLocationButton"
+                onclick="beginLocationSharing()">
+
+                Start Location Sharing
+
+            </button>
+
+            <button
+                class="secondary-btn"
+                id="stopLocationButton"
+                style="display:none;"
+                onclick="stopLocationSharing()">
+
+                Stop Sharing
+
+            </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    ADMIN EMPLOYMENT MONITORING -->
+    <div
+    class="login-modal"
+    id="adminEmploymentModal">
+
+      <div
+        class="login-box applicants-box admin-employment-box">
+
+        <span
+            class="close-btn"
+            onclick="closeAdminEmploymentModal()">
+            ✕
+        </span>
+
+        <h2>
+            Employment Monitoring
+        </h2>
+
+        <div
+            id="employmentOverviewCards"
+            class="dashboard-stats">
+
+        </div>
+
+        <div
+            id="employmentRecordsContainer">
+            Loading employment records...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    WORK SESSION MODAL -->
+    <div
+    class="login-modal"
+    id="workSessionModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closeWorkSessionModal()">
+            ✕
+        </span>
+
+        <h2>
+            Work Session
+        </h2>
+
+        <div id="workSessionDetails">
+            Loading...
+        </div>
+
+        <div
+            id="workCompletionFields"
+            style="display:none;">
+
+            <div class="form-group">
+
+                <label for="hoursWorked">
+                    Hours Worked
+                </label>
+
+                <input
+                    type="number"
+                    id="hoursWorked"
+                    min="0"
+                    max="24"
+                    step="0.5"
+                    placeholder="Example: 8"
+                >
+
+            </div>
+
+            <div class="form-group">
+                <label for="employerNotes">
+                    Work Notes
+                </label>
+
+                <textarea
+                    id="employerNotes"
+                    rows="4"
+                    placeholder="Describe the work completed...">
+                </textarea>
+
+            </div>
+
+        </div>
+
+        <div
+            class="applicant-actions"
+            id="workSessionActions">
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    JOB OFFER CONFIRMATION MODAL -->
+    <div
+    class="login-modal"
+    id="jobOfferModal">
+
+      <div class="login-box applicants-box">
+        <span
+            class="close-btn"
+            onclick="closeJobOfferModal()">
+            ✕
+        </span>
+
+        <h2>
+            Send Job Offer
+        </h2>
+
+        <div
+            id="jobOfferDetails">
+            Loading offer details...
+        </div>
+
+        <div class="form-group">
+            <label for="offerMessage">
+                Message to Beneficiary
+            </label>
+
+            <textarea
+                id="offerMessage"
+                rows="4"
+                placeholder="Add instructions or a message for the beneficiary...">
+            </textarea>
+        </div>
+
+        <div class="applicant-actions">
+            <button
+                class="secondary-btn"
+                onclick="closeJobOfferModal()">
+                Cancel
+            </button>
+
+            <button
+                class="primary-btn"
+                onclick="confirmSendJobOffer()">
+                Send Job Offer
+            </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+    SUCCESS POPUP -->
+    <div
+    id="jobPopup"
+    class="success-popup">
+      <div class="success-popup-box">
+        <div class="success-popup-icon">
+        ✓
+        </div>
+
+        <h2 id="jobPopupTitle">
+        Success
+        </h2>
+
+        <p id="jobPopupMessage">
+        Operation completed successfully.
+        </p>
+
+        <button onclick="closeJobPopup()">
+        OK
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="config.js"></script>
