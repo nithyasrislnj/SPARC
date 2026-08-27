@@ -1031,7 +1031,9 @@ async function openCompletionForm(donationId) {
     try {
         const response =
             await fetch(
-                `${API_BASE_URL}/get_beneficiaries`
+                `${API_BASE_URL}/get_beneficiaries?email=${encodeURIComponent(
+                    localStorage.getItem("email")
+                )}`
             );
 
         if (!response.ok) {
@@ -1040,8 +1042,11 @@ async function openCompletionForm(donationId) {
             );
         }
 
-        const beneficiaries =
+        const data =
             await response.json();
+
+        const beneficiaries =
+            data.beneficiaries || [];
 
 
         if (!beneficiaries.length) {

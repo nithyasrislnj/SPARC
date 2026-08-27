@@ -1191,7 +1191,10 @@ def get_beneficiaries():
     cursor.close()
     db.close()
 
-    return jsonify(beneficiaries)
+    return jsonify({
+        "success": True,
+        "beneficiaries": beneficiaries
+    })
 
 
 

@@ -1035,34 +1035,27 @@ async function loadAssistedBeneficiaries(){
          */
         const response =
             await fetch(
-                `${API_BASE_URL}/get_beneficiaries`
+                `${API_BASE_URL}/get_beneficiaries?email=${encodeURIComponent(email)}`
             );
-
 
         const data =
             await response.json();
 
-
         if(!response.ok){
-
             throw new Error(
                 data.message ||
                 "Unable to load beneficiaries."
             );
-
         }
-
 
         const beneficiaries =
             data.beneficiaries ||
             [];
 
-
         select.innerHTML =
             `<option value="">
                 Select Beneficiary
             </option>`;
-
 
         beneficiaries.forEach(
             beneficiary => {
@@ -1081,10 +1074,8 @@ async function loadAssistedBeneficiaries(){
                 select.appendChild(
                     option
                 );
-
             }
         );
-
 
         if(
             beneficiaries.length === 0
@@ -4924,11 +4915,23 @@ async function loadAssistedPayments(){
     try{
         const response =
             await fetch(
-                `${API_BASE_URL}/get_payments?email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`
+                `${API_BASE_URL}/get_payments?email=${encodeURIComponent(email)}`
             );
 
-        const data =
-            await response.json();
+        const responseText =
+            await response.text();
+
+        let data;
+
+        try {
+            data =
+                JSON.parse(responseText);
+        }
+        catch(error) {
+            throw new Error(
+                `Server returned HTTP ${response.status} instead of JSON.`
+            );
+        }
 
         if(
             !response.ok ||
