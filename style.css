@@ -2420,6 +2420,13 @@
       line-height: 1.5;
     }
 
+    .job-role-controls{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      flex-wrap:nowrap;
+    }
+    
     .job-role-controls {
       display: flex;
       justify-content: flex-end;

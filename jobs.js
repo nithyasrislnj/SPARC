@@ -114,6 +114,8 @@ let allJobs = [];
 
 let currentEmployerApplications = [];
 
+let isSubmittingJob = false;
+
 // ============================================================
 // PAGE LOAD
 document.addEventListener("DOMContentLoaded", () => {
@@ -172,6 +174,15 @@ async function initializeJobPage(){
     }
 
     await loadJobs();
+
+    // OPEN EMPLOYER APPLICATIONS WHEN REQUESTED
+    if(
+        role === "Employer" &&
+        new URLSearchParams(window.location.search)
+            .get("open") === "applications"
+    ){
+        await loadEmployerApplications();
+    }
 
     if(
         role === "Volunteer" ||
@@ -1253,20 +1264,33 @@ function closePostJobModal(){
 // ============================================================
 // EMPLOYER: SUBMIT JOB
 // ============================================================
-
 async function submitNewJob(){
+    // Prevent multiple job submissions
+    if(isSubmittingJob){
+        return;
+    }
+
+    isSubmittingJob = true;
+
+    const submitButton =
+        document.querySelector(
+            "#postJobModal button[onclick='submitNewJob()']"
+        );
+
+    if(submitButton){
+        submitButton.disabled = true;
+        submitButton.textContent = "Posting...";
+    }
 
     const employerEmail =
         localStorage.getItem(
             "email"
         );
 
-
     const title =
         document.getElementById(
             "jobTitle"
         ).value.trim();
-
 
     const description =
         document.getElementById(
@@ -1443,9 +1467,7 @@ async function submitNewJob(){
 
 
         if(response.ok){
-
             closePostJobModal();
-
             clearPostJobForm();
 
             await loadJobs();
@@ -1456,30 +1478,39 @@ async function submitNewJob(){
             );
 
         }
-
         else{
+            // Allow the user to try again if posting failed
+            isSubmittingJob = false;
+
+            if(submitButton){
+                submitButton.disabled = false;
+                submitButton.textContent = "Post Job";
+            }
 
             alert(
                 data.message ||
                 "Unable to post job."
             );
-
         }
-
     }
 
     catch(error){
-
         console.error(
             error
         );
 
+        // Allow retry if there was a connection/server error
+        isSubmittingJob = false;
+
+        if(submitButton){
+            submitButton.disabled = false;
+            submitButton.textContent = "Post Job";
+        }
+
         alert(
             "Unable to connect to the server."
         );
-
     }
-
 }
 
 

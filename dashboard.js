@@ -1,4 +1,6 @@
 let dashboardChart = null;
+let allDashboardNotifications = [];
+let notificationsExpanded = false;
 
 /* Dashboard Greetings */
 function getGreeting(){
@@ -312,62 +314,41 @@ async function loadDashboard(role){
 }
 
 async function loadDashboardNotifications(){
-    const email = localStorage.getItem("email");
+    const email =
+        localStorage.getItem("email");
 
     try{
         const response =
-        await fetch(
-        `${API_BASE_URL}/get_notifications/${email}`
-        );
+            await fetch(
+                `http://127.0.0.1:5001/get_notifications/${email}`
+            );
 
         const notifications =
-        await response.json();
+            await response.json();
 
         const container =
-        document.getElementById("dashboardNotifications");
+            document.getElementById(
+                "dashboardNotifications"
+            );
 
         if(!container){
-          return;
-        }
-
-        if(notifications.length===0){
-
-            container.innerHTML=
-            "<p>No notifications yet.</p>";
-
             return;
         }
-        let html="";
 
-        notifications
-        .slice(0,5)
-        .forEach(notification=>{
-            html += `
-            <div class="dashboard-list-item">
-                <div>
-                    <strong>
-                    🔔 ${notification.title}
-                    </strong>
-                    <br>
-                    <small>
-                    ${new Date(notification.time)
-                    .toLocaleString()}
-                    </small>
-                </div>
-            </div>
-            `;
-        });
+        if(notifications.length === 0){
+            container.innerHTML =
+                "<p>No notifications yet.</p>";
+            return;
+        }
 
-        html += `
-        <div
-        class="view-all-link"
-        onclick="showNotifications()">
+        // Store all notifications
+        allDashboardNotifications =
+            notifications;
 
-        View All →
+        // Initially show only first 5
+        notificationsExpanded = false;
 
-        </div>
-        `;
-        container.innerHTML=html;
+        renderDashboardNotifications();
     }
 
     catch(error){
@@ -375,6 +356,85 @@ async function loadDashboardNotifications(){
     }
 }
 
+
+function renderDashboardNotifications(){
+    const container =
+        document.getElementById(
+            "dashboardNotifications"
+        );
+
+    if(!container){
+        return;
+    }
+
+    let html = "";
+
+    const notificationsToShow =
+        notificationsExpanded
+            ? allDashboardNotifications
+            : allDashboardNotifications.slice(0,5);
+
+    notificationsToShow.forEach(notification => {
+        html += `
+        <div class="dashboard-list-item">
+            <div>
+                <strong>
+                    🔔 ${notification.title}
+                </strong>
+
+                <br>
+
+                <small>
+                    ${new Date(
+                        notification.time
+                    ).toLocaleString()}
+                </small>
+            </div>
+        </div>
+        `;
+    });
+
+    // Show View All only when there are
+    // more than 5 notifications
+    if(
+        allDashboardNotifications.length > 5
+    ){
+        if(notificationsExpanded){
+            html += `
+            <div
+                class="view-all-link"
+                onclick="hideNotifications()">
+
+                Hide All ↑
+
+            </div>
+            `;
+        }
+        else{
+            html += `
+            <div
+                class="view-all-link"
+                onclick="showNotifications()">
+
+                View All →
+
+            </div>
+            `;
+        }
+    }
+
+    container.innerHTML = html;
+}
+
+function showNotifications(){
+    notificationsExpanded = true;
+    renderDashboardNotifications();
+}
+
+function hideNotifications(){
+    notificationsExpanded = false;
+    renderDashboardNotifications();
+}
 
 async function loadDashboardActivity(){
     const email = localStorage.getItem("email");
@@ -558,11 +618,12 @@ function loadQuickActions(role){
     else if(role === "Employer"){
         html = `
         <button class="primary-btn">
-            💼 Post Job
+            onclick="window.location.href='jobs.html'">
+                💼 Post Job
         </button>
 
         <button class="primary-btn"
-            onclick="window.location.href='jobs.html'">
+            onclick="window.location.href='jobs.html?open=applications'">
                 📋 View Applications
         </button>
         `;

@@ -25,6 +25,9 @@ def get_db():
 app = Flask(__name__)
 CORS(app)
 
+ADMIN_EMAIL = os.getenv(
+    "ADMIN_EMAIL"
+)
 
 # CLOUDINARY CONFIGURATION
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
@@ -36,6 +39,7 @@ cloudinary.config(
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET
 )
+
 
 # EMAIL CONFIGURATION (BREVO)
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -273,6 +277,12 @@ def login():
         return jsonify({
             "message":"User Not Found"
         }),401
+
+    # Only the designated email can use the Admin role
+    if role == "Admin" and email.lower() != ADMIN_EMAIL.lower():
+        return jsonify({
+            "message": "This account is not authorized as Admin."
+        }), 403
 
     if not bcrypt.checkpw(
         password.encode(),
