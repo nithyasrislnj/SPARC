@@ -320,7 +320,7 @@ async function loadDashboardNotifications(){
     try{
         const response =
             await fetch(
-                `http://127.0.0.1:5001/get_notifications/${email}`
+                `${API_BASE_URL}/get_notifications/${email}`
             );
 
         const notifications =
