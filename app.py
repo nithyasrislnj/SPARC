@@ -8897,6 +8897,8 @@ def admin_user_counts():
     rows = cursor.fetchall()
 
     counts = {
+        "Total": 0,
+        "Admin": 0,
         "Volunteer": 0,
         "NGO": 0,
         "Donor": 0,
@@ -8904,7 +8906,12 @@ def admin_user_counts():
     }
 
     for row in rows:
-        counts[row["role"]] = row["total"]
+        role = row["role"]
+        total = row["total"]
+
+        counts[role] = total
+
+        counts["Total"] += total
 
     cursor.close()
     db.close()

@@ -617,12 +617,14 @@ function loadQuickActions(role){
 
     else if(role === "Employer"){
         html = `
-        <button class="primary-btn">
+        <button 
+            class="primary-btn"
             onclick="window.location.href='jobs.html'">
                 💼 Post Job
         </button>
 
-        <button class="primary-btn"
+        <button 
+            class="primary-btn"
             onclick="window.location.href='jobs.html?open=applications'">
                 📋 View Applications
         </button>

@@ -8,32 +8,111 @@ let currentStatus = "";
 
 const USERS_PER_PAGE = 10;
 
+
+function animateCount(elementId, targetValue, duration = 1200) {
+    const element =
+        document.getElementById(elementId);
+
+    const startTime =
+        performance.now();
+
+    function updateCount(currentTime) {
+        const elapsed =
+            currentTime - startTime;
+
+        const progress =
+            Math.min(elapsed / duration, 1);
+
+        // Smooth animation
+        const easedProgress =
+            1 - Math.pow(1 - progress, 3);
+
+        const currentValue =
+            Math.floor(targetValue * easedProgress);
+
+        element.innerText =
+            currentValue;
+
+        if(progress < 1){
+            requestAnimationFrame(
+                updateCount
+            );
+        }
+        else{
+            element.innerText =
+                targetValue;
+        }
+    }
+
+    requestAnimationFrame(
+        updateCount
+    );
+}
+
+
 /* LOAD USER COUNTS */
 async function loadUserCounts() {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/api/admin/user-counts`
+        const adminEmail =
+            localStorage.getItem("email");
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/user-counts?email=${encodeURIComponent(adminEmail)}`
+            );
+
+        if(!response.ok){
+            throw new Error(
+                "Unable to load user counts"
+            );
+        }
+
+        const counts =
+            await response.json();
+
+        const volunteer =
+            counts.Volunteer || 0;
+
+        const ngo =
+            counts.NGO || 0;
+
+        const donor =
+            counts.Donor || 0;
+
+        const employer =
+            counts.Employer || 0;
+
+        animateCount(
+            "volunteerCount",
+            volunteer
         );
 
-        const counts = await response.json();
+        animateCount(
+            "ngoCount",
+            ngo
+        );
 
-        const volunteer = counts.Volunteer || 0;
-        const ngo = counts.NGO || 0;
-        const donor = counts.Donor || 0;
-        const employer = counts.Employer || 0;
+        animateCount(
+            "donorCount",
+            donor
+        );
 
-        document.getElementById("volunteerCount").innerText = volunteer;
-        document.getElementById("ngoCount").innerText = ngo;
-        document.getElementById("donorCount").innerText = donor;
-        document.getElementById("employerCount").innerText = employer;
+        animateCount(
+            "employerCount",
+            employer
+        );
 
-        document.getElementById("totalUsers").innerText =
-            volunteer + ngo + donor + employer;
-        
+        animateCount(
+            "totalUsers",
+            counts.Total || 0
+        );
     }
-    catch (error) {
-        console.error(error);
-        alert("Unable to load user counts.");
+
+    catch(error){
+        console.error(
+            "User count error:",
+            error
+        );
     }
 }
 
@@ -55,11 +134,22 @@ async function loadUsersByRole(role) {
     `;
 
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/api/admin/users/${role}`
-        );
+        const adminEmail =
+            localStorage.getItem("email");
 
-        const users = await response.json();
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/users/${role}?email=${encodeURIComponent(adminEmail)}`
+            );
+
+        if(!response.ok){
+            throw new Error(
+                "Unable to load users"
+            );
+        }
+
+        const users =
+            await response.json();
 
         allUsers = users;
 
@@ -218,12 +308,22 @@ document
     }
 
     if(masterUsers.length===0){
-        const response=
+        const adminEmail =
+            localStorage.getItem("email");
+
+        const response =
             await fetch(
-                `${API_BASE_URL}/api/admin/users`
+                `${API_BASE_URL}/api/admin/users?email=${encodeURIComponent(adminEmail)}`
             );
 
-        masterUsers= await response.json();
+        if(!response.ok){
+            throw new Error(
+                "Unable to load users"
+            );
+        }
+
+        masterUsers =
+            await response.json();
     }
 
     filteredUsers=masterUsers.filter(user=>
@@ -324,13 +424,16 @@ async function toggleUserStatus(userId){
         return;
 
     try{
+        const adminEmail =
+            localStorage.getItem("email");
 
-        const response=await fetch(
-            `${API_BASE_URL}/api/admin/users/${userId}`,
-            {
-                method:"PUT"
-            }
-        );
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/users/${userId}?email=${encodeURIComponent(adminEmail)}`,
+                {
+                    method:"PUT"
+                }
+            );
 
         const result=await response.json();
 
@@ -392,11 +495,22 @@ async function loadAllUsers() {
     `;
 
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/api/admin/users`
-        );
+        const adminEmail =
+            localStorage.getItem("email");
 
-        const users= await response.json();
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/users?email=${encodeURIComponent(adminEmail)}`
+            );
+
+        if(!response.ok){
+            throw new Error(
+                "Unable to load users"
+            );
+        }
+
+        const users =
+            await response.json();
 
         masterUsers=users;
 
