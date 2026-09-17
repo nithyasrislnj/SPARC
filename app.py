@@ -1214,18 +1214,11 @@ def get_beneficiaries():
 @app.route('/complete_donation/<int:donation_id>', methods=['POST'])
 def complete_donation(donation_id):
 
-    data = request.json
+    data = request.json or {}
 
     volunteer_email = data.get("email")
-    beneficiary_id = data.get("beneficiary_id")
+    beneficiaries = data.get("beneficiaries", [])
     completion_notes = data.get("completion_notes", "")
-    proof_photo = data.get("proof_photo")
-
-    if not proof_photo:
-        return jsonify({
-            "success": False,
-            "message": "Donation proof photo is required."
-        }), 400
 
     if not volunteer_email:
         return jsonify({
@@ -1233,207 +1226,328 @@ def complete_donation(donation_id):
             "message": "Volunteer email is required."
         }), 400
 
-    if not beneficiary_id:
+    if not beneficiaries:
         return jsonify({
             "success": False,
-            "message": "Please select a beneficiary."
+            "message": "Please select at least one beneficiary."
+        }), 400
+
+    if not isinstance(beneficiaries, list):
+        return jsonify({
+            "success": False,
+            "message": "Invalid beneficiary data."
         }), 400
 
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
-    # ------------------------------------------
-    # 1. Check donation
-    # ------------------------------------------
-    cursor.execute("""
-        SELECT
-            id,
-            food_type,
-            quantity,
-            donor_email,
+    try:
+
+        # ------------------------------------------
+        # 1. Check donation
+        # ------------------------------------------
+        cursor.execute("""
+            SELECT
+                id,
+                food_type,
+                quantity,
+                donor_email,
+                volunteer_email,
+                status
+            FROM food_donations
+            WHERE id=%s
+        """, (donation_id,))
+
+        donation = cursor.fetchone()
+
+        if not donation:
+            return jsonify({
+                "success": False,
+                "message": "Donation not found."
+            }), 404
+
+        # ------------------------------------------
+        # 2. Check assigned volunteer
+        # ------------------------------------------
+        if donation["volunteer_email"] != volunteer_email:
+            return jsonify({
+                "success": False,
+                "message": "You are not responsible for this donation."
+            }), 403
+
+        # ------------------------------------------
+        # 3. Check status
+        # ------------------------------------------
+        if donation["status"] != "Out for Delivery":
+            return jsonify({
+                "success": False,
+                "message":
+                    "Donation must be out for delivery before it can be completed."
+            }), 400
+
+        # ------------------------------------------
+        # 4. Validate beneficiaries
+        # ------------------------------------------
+        beneficiary_ids = []
+
+        for item in beneficiaries:
+
+            beneficiary_id = item.get("beneficiary_id")
+            quantity_received = str(
+                item.get("quantity_received", "")
+            ).strip()
+            proof_photo = item.get("proof_photo")
+
+            if not beneficiary_id:
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid beneficiary selected."
+                }), 400
+
+            if not quantity_received:
+                return jsonify({
+                    "success": False,
+                    "message":
+                        "Please enter the quantity given to every beneficiary."
+                }), 400
+
+            if not proof_photo:
+                return jsonify({
+                    "success": False,
+                    "message":
+                        "Please upload proof for every beneficiary."
+                }), 400
+
+            if beneficiary_id in beneficiary_ids:
+                return jsonify({
+                    "success": False,
+                    "message":
+                        "The same beneficiary cannot be selected more than once."
+                }), 400
+
+            beneficiary_ids.append(beneficiary_id)
+
+        # ------------------------------------------
+        # 5. Verify beneficiaries
+        # ------------------------------------------
+        placeholders = ",".join(
+            ["%s"] * len(beneficiary_ids)
+        )
+
+        cursor.execute(
+            f"""
+                SELECT
+                    id,
+                    full_name,
+                    phone,
+                    location,
+                    support_type,
+                    status
+                FROM beneficiaries
+                WHERE id IN ({placeholders})
+                AND status='Pending'
+            """,
+            tuple(beneficiary_ids)
+        )
+
+        beneficiary_rows = cursor.fetchall()
+
+        if len(beneficiary_rows) != len(beneficiary_ids):
+            return jsonify({
+                "success": False,
+                "message":
+                    "One or more selected beneficiaries could not be found."
+            }), 404
+
+        beneficiary_map = {
+            row["id"]: row
+            for row in beneficiary_rows
+        }
+
+        # ------------------------------------------
+        # 6. Update donation
+        # ------------------------------------------
+        cursor.execute("""
+            UPDATE food_donations
+            SET
+                status='Completed',
+                completed_at=NOW(),
+                completion_notes=%s
+            WHERE id=%s
+            AND volunteer_email=%s
+            AND status='Out for Delivery'
+        """, (
+            completion_notes,
+            donation_id,
+            volunteer_email
+        ))
+
+        if cursor.rowcount == 0:
+            db.rollback()
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Donation could not be completed. Please try again."
+            }), 409
+
+        # ------------------------------------------
+        # 7. Save beneficiaries + proof photos
+        # ------------------------------------------
+        for item in beneficiaries:
+
+            beneficiary_id = int(
+                item["beneficiary_id"]
+            )
+
+            quantity_received = str(
+                item["quantity_received"]
+            ).strip()
+
+            proof_photo = item["proof_photo"]
+
+            cursor.execute("""
+                INSERT INTO donation_beneficiaries
+                (
+                    donation_id,
+                    beneficiary_id,
+                    quantity_received
+                )
+                VALUES (%s, %s, %s)
+            """, (
+                donation_id,
+                beneficiary_id,
+                quantity_received
+            ))
+
+            cursor.execute("""
+                INSERT INTO donation_proofs
+                (
+                    donation_id,
+                    beneficiary_id,
+                    proof_photo
+                )
+                VALUES (%s, %s, %s)
+            """, (
+                donation_id,
+                beneficiary_id,
+                proof_photo
+            ))
+
+        # ------------------------------------------
+        # 8. Get volunteer name
+        # ------------------------------------------
+        cursor.execute("""
+            SELECT name
+            FROM users
+            WHERE email=%s
+        """, (volunteer_email,))
+
+        volunteer = cursor.fetchone()
+
+        volunteer_name = (
+            volunteer["name"]
+            if volunteer
+            else volunteer_email
+        )
+
+        # ------------------------------------------
+        # 9. Get active Admins
+        # ------------------------------------------
+        cursor.execute("""
+            SELECT email
+            FROM users
+            WHERE role='Admin'
+            AND status='Active'
+        """)
+
+        admins = cursor.fetchall()
+
+        # ------------------------------------------
+        # 10. Get donor
+        # ------------------------------------------
+        donor_email = donation["donor_email"]
+
+        beneficiary_names = [
+            beneficiary_map[
+                int(item["beneficiary_id"])
+            ]["full_name"]
+            for item in beneficiaries
+        ]
+
+        beneficiary_text = ", ".join(
+            beneficiary_names
+        )
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        # ------------------------------------------
+        # 11. Notify Admin
+        # ------------------------------------------
+        for admin in admins:
+
+            add_notification(
+                admin["email"],
+                "Donation #" +
+                str(donation_id) +
+                " was successfully delivered by Volunteer " +
+                volunteer_name +
+                " to " +
+                beneficiary_text +
+                "."
+            )
+
+        # ------------------------------------------
+        # 12. Notify Donor
+        # ------------------------------------------
+        if donor_email:
+
+            add_notification(
+                donor_email,
+                "Your food donation #" +
+                str(donation_id) +
+                " was successfully delivered to " +
+                beneficiary_text +
+                "."
+            )
+
+        # ------------------------------------------
+        # 13. Activity
+        # ------------------------------------------
+        add_activity(
             volunteer_email,
-            status
-        FROM food_donations
-        WHERE id=%s
-    """, (donation_id,))
-
-    donation = cursor.fetchone()
-
-    if not donation:
-        cursor.close()
-        db.close()
-
-        return jsonify({
-            "success": False,
-            "message": "Donation not found."
-        }), 404
-
-    # ------------------------------------------
-    # 2. Check assigned volunteer
-    # ------------------------------------------
-    if donation["volunteer_email"] != volunteer_email:
-        cursor.close()
-        db.close()
-
-        return jsonify({
-            "success": False,
-            "message": "You are not responsible for this donation."
-        }), 403
-
-    # ------------------------------------------
-    # 3. Check current status
-    # ------------------------------------------
-    if donation["status"] != "Out for Delivery":
-        cursor.close()
-        db.close()
-
-        return jsonify({
-            "success": False,
-            "message":
-                "Donation must be out for delivery before it can be completed."
-        }), 400
-
-    # ------------------------------------------
-    # 4. Check beneficiary
-    # ------------------------------------------
-    cursor.execute("""
-        SELECT
-            id,
-            full_name,
-            phone,
-            location,
-            support_type,
-            status
-        FROM beneficiaries
-        WHERE id=%s
-        AND status='Pending'
-    """, (beneficiary_id,))
-
-    beneficiary = cursor.fetchone()
-
-    if not beneficiary:
-        cursor.close()
-        db.close()
-
-        return jsonify({
-            "success": False,
-            "message": "Beneficiary not found."
-        }), 404
-
-    # ------------------------------------------
-    # 5. Complete donation
-    # ------------------------------------------
-    cursor.execute("""
-        UPDATE food_donations
-        SET
-            status='Completed',
-            beneficiary_id=%s,
-            completed_at=NOW(),
-            proof_photo=%s,
-            completion_notes=%s
-        WHERE id=%s
-        AND volunteer_email=%s
-        AND status='Out for Delivery'
-    """, (
-        beneficiary_id,
-        proof_photo,
-        completion_notes,
-        donation_id,
-        volunteer_email
-    ))
-
-    if cursor.rowcount == 0:
-        cursor.close()
-        db.close()
-
-        return jsonify({
-            "success": False,
-            "message":
-                "Donation could not be completed. Please try again."
-        }), 409
-
-    # ------------------------------------------
-    # 6. Get volunteer name
-    # ------------------------------------------
-    cursor.execute("""
-        SELECT name
-        FROM users
-        WHERE email=%s
-    """, (volunteer_email,))
-
-    volunteer = cursor.fetchone()
-
-    volunteer_name = (
-        volunteer["name"]
-        if volunteer
-        else volunteer_email
-    )
-
-    # ------------------------------------------
-    # 7. Get active Admins
-    # ------------------------------------------
-    cursor.execute("""
-        SELECT email
-        FROM users
-        WHERE role='Admin'
-        AND status='Active'
-    """)
-
-    admins = cursor.fetchall()
-
-    # ------------------------------------------
-    # 8. Get donor email
-    # ------------------------------------------
-    donor_email = donation["donor_email"]
-
-    cursor.close()
-    db.close()
-
-    # ------------------------------------------
-    # 9. Notify Admin
-    # ------------------------------------------
-    for admin in admins:
-        add_notification(
-            admin["email"],
-            "Donation #" +
+            "Successfully delivered Donation #" +
             str(donation_id) +
-            " was successfully delivered by Volunteer " +
-            volunteer_name +
             " to " +
-            beneficiary["full_name"] +
-            "."
+            beneficiary_text
         )
 
-    # ------------------------------------------
-    # 10. Notify Donor
-    # ------------------------------------------
-    if donor_email:
-        add_notification(
-            donor_email,
-            "Your food donation #" +
-            str(donation_id) +
-            " was successfully delivered to " +
-            beneficiary["full_name"] +
-            ". Thank you for supporting the community!"
+        return jsonify({
+            "success": True,
+            "message":
+                "Donation completed successfully."
+        })
+
+    except Exception as error:
+
+        db.rollback()
+
+        print(
+            "Complete donation error:",
+            error
         )
 
-    # ------------------------------------------
-    # 11. Volunteer activity
-    # ------------------------------------------
-    add_activity(
-        volunteer_email,
-        "Successfully delivered Donation #" +
-        str(donation_id) +
-        " to " +
-        beneficiary["full_name"]
-    )
+        cursor.close()
+        db.close()
 
-
-    return jsonify({
-        "success": True,
-        "message": "Donation completed successfully."
-    })
-
+        return jsonify({
+            "success": False,
+            "message":
+                "Unable to complete donation."
+        }), 500
 
 # ==========================================
 # ADMIN - GET ALL FOOD DONATIONS
@@ -1526,6 +1640,44 @@ def admin_get_donations():
     """)
 
     donations = cursor.fetchall()
+
+    for donation in donations:
+        cursor.execute("""
+            SELECT
+                db.beneficiary_id,
+                b.full_name,
+                b.location,
+                db.quantity_received
+            FROM donation_beneficiaries db
+            JOIN beneficiaries b
+                ON db.beneficiary_id = b.id
+            WHERE db.donation_id=%s
+            ORDER BY db.id
+        """, (
+            donation["id"],
+        ))
+
+        donation["distributed_beneficiaries"] = (
+            cursor.fetchall()
+        )
+
+        cursor.execute("""
+            SELECT
+                dp.beneficiary_id,
+                b.full_name,
+                dp.proof_photo
+            FROM donation_proofs dp
+            JOIN beneficiaries b
+                ON dp.beneficiary_id = b.id
+            WHERE dp.donation_id=%s
+            ORDER BY dp.id
+        """, (
+            donation["id"],
+        ))
+
+        donation["proof_photos"] = (
+            cursor.fetchall()
+        )
 
     for donation in donations:
         for field in [
@@ -7619,7 +7771,10 @@ def admin_employment_overview():
 
             SUM(
                 CASE
-                    WHEN status='IN_PROGRESS'
+                    WHEN status IN (
+                        'CHECKED_IN',
+                        'WORKING'
+                    )
                     THEN 1 ELSE 0
                 END
             ) AS in_progress,
@@ -7633,21 +7788,21 @@ def admin_employment_overview():
 
             SUM(
                 CASE
-                    WHEN status='PAYMENT_DUE'
+                    WHEN status='EMPLOYER_CONFIRMED'
                     THEN 1 ELSE 0
                 END
             ) AS payment_due,
 
             SUM(
                 CASE
-                    WHEN status='PAID'
+                    WHEN status='COMPLETED'
                     THEN 1 ELSE 0
                 END
             ) AS paid,
 
             SUM(
                 CASE
-                    WHEN status='PAYMENT_VERIFIED'
+                    WHEN status='COMPLETED'
                     THEN 1 ELSE 0
                 END
             ) AS payment_verified

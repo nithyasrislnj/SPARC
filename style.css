@@ -398,6 +398,12 @@
       transform:translateX(110%);
     }
 
+    #panelContent{
+      height:calc(100vh - 130px);
+      overflow-y:auto;
+      padding-right:8px;
+    }
+
     .side-panel.active{
       transform:translateX(0);
     }
@@ -2422,17 +2428,80 @@
 
     .job-role-controls{
       display:flex;
-      align-items:center;
-      gap:15px;
-      flex-wrap:nowrap;
-    }
-    
-    .job-role-controls {
-      display: flex;
       justify-content: flex-end;
-      gap: 12px;
+      align-items:center;
+      gap:12px;
       margin: 25px 0;
-      flex-wrap: wrap;
+      flex-wrap:wrap;
+    }
+
+    .employer-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      min-height: 48px;
+      padding: 11px 18px;
+
+      background: white;
+      color: var(--primary);
+
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .employer-action-btn .material-symbols-outlined {
+      font-size: 21px;
+    }
+
+    .employer-action-btn:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 122, 47, 0.18);
+    }
+
+    .jobs-refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      min-height: 42px;
+      padding: 9px 16px;
+
+      background: white;
+      color: var(--primary);
+
+      border: 1.5px solid #d9e2dc;
+      border-radius: 10px;
+
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .jobs-refresh-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .jobs-refresh-btn:hover {
+      border-color: var(--primary);
+      color: white;
+      background: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(15, 122, 47, 0.15);
     }
 
     .job-toolbar {

@@ -47,16 +47,43 @@ async function loadAdminDonations() {
                     let proofHTML =
                         `<span>No proof uploaded</span>`;
 
-                    if (donation.proof_photo) {
-                        proofHTML = `
-                            <a
-                                href="${donation.proof_photo}"
-                                target="_blank"
-                                class="primary-btn"
-                            >
-                                📷 View Proof
-                            </a>
-                        `;
+                    if (
+                        donation.proof_photos &&
+                        donation.proof_photos.length
+                    ) {
+
+                        proofHTML =
+                            donation.proof_photos
+                                .map(
+                                    proof => `
+
+                                        <div
+                                            style="
+                                                margin-bottom:8px;
+                                            "
+                                        >
+
+                                            <strong>
+                                                ${escapeAdminText(
+                                                    proof.full_name
+                                                )}
+                                            </strong>
+
+                                            <br>
+
+                                            <a
+                                                href="${proof.proof_photo}"
+                                                target="_blank"
+                                                class="primary-btn"
+                                            >
+                                                📷 View Proof
+                                            </a>
+
+                                        </div>
+
+                                    `
+                                )
+                                .join("");
                     }
 
                     return `
@@ -134,13 +161,64 @@ async function loadAdminDonations() {
 
                                 <div>
                                     <strong>
-                                        Beneficiary:
+                                        Beneficiaries:
                                     </strong>
 
-                                    ${escapeAdminText(
-                                        donation.beneficiary_name ||
-                                        "Not delivered"
-                                    )}
+                                    ${
+                                        donation.distributed_beneficiaries &&
+                                        donation.distributed_beneficiaries.length
+                                            ?
+                                            `
+                                            <div style="margin-top:8px;">
+
+                                                ${
+                                                    donation.distributed_beneficiaries
+                                                        .map(
+                                                            beneficiary => `
+                                                                <div
+                                                                    style="
+                                                                        margin-bottom:8px;
+                                                                        padding:8px;
+                                                                        border:1px solid #ddd;
+                                                                        border-radius:6px;
+                                                                    "
+                                                                >
+
+                                                                    <strong>
+                                                                        ${escapeAdminText(
+                                                                            beneficiary.full_name
+                                                                        )}
+                                                                    </strong>
+
+                                                                    <br>
+
+                                                                    Quantity:
+                                                                    ${escapeAdminText(
+                                                                        beneficiary.quantity_received
+                                                                    )}
+
+                                                                    <br>
+
+                                                                    Location:
+                                                                    ${escapeAdminText(
+                                                                        beneficiary.location ||
+                                                                        "—"
+                                                                    )}
+
+                                                                </div>
+                                                            `
+                                                        )
+                                                        .join("")
+                                                }
+
+                                            </div>
+                                            `
+                                            :
+                                            escapeAdminText(
+                                                donation.beneficiary_name ||
+                                                "Not delivered"
+                                            )
+                                    }
                                 </div>
 
                                 <div>

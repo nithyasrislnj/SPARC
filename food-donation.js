@@ -1002,33 +1002,36 @@ function escapeDonationText(
 // ==========================================
 // OPEN COMPLETION FORM
 async function openCompletionForm(donationId) {
-    // Prevent multiple completion forms
+
     const existingForm =
         document.getElementById(
             `completionForm-${donationId}`
         );
 
     if (existingForm) {
+
         existingForm.scrollIntoView({
             behavior: "smooth",
             block: "center"
         });
+
         return;
     }
 
-    // Disable the Complete Donation button
     const completeButton =
         document.getElementById(
             `completeDonationBtn-${donationId}`
         );
 
     if (completeButton) {
+
         completeButton.disabled = true;
         completeButton.style.opacity = "0.6";
         completeButton.style.cursor = "not-allowed";
     }
 
     try {
+
         const response =
             await fetch(
                 `${API_BASE_URL}/get_beneficiaries?email=${encodeURIComponent(
@@ -1048,13 +1051,14 @@ async function openCompletionForm(donationId) {
         const beneficiaries =
             data.beneficiaries || [];
 
-
         if (!beneficiaries.length) {
+
             alert(
                 "No available beneficiaries found."
             );
 
             if (completeButton) {
+
                 completeButton.disabled = false;
                 completeButton.style.opacity = "1";
                 completeButton.style.cursor = "pointer";
@@ -1063,21 +1067,85 @@ async function openCompletionForm(donationId) {
             return;
         }
 
+        donationProofPhotos[donationId] = {};
+
         const beneficiaryOptions =
             beneficiaries.map(
                 beneficiary => `
-                    <option
-                        value="${beneficiary.id}">
 
-                        ${escapeDonationText(
-                            beneficiary.full_name
-                        )}
-                        -
-                        ${escapeDonationText(
-                            beneficiary.location
-                        )}
+                    <label
+                        class="beneficiary-selection-row"
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:12px;
+                            padding:12px;
+                            margin-bottom:8px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                        ">
 
-                    </option>
+                        <input
+                            type="checkbox"
+                            class="beneficiary-checkbox-${donationId}"
+                            value="${beneficiary.id}"
+                            onchange="updateBeneficiaryRows(
+                                ${donationId}
+                            )">
+
+                        <span>
+                            <strong>
+                                ${escapeDonationText(
+                                    beneficiary.full_name
+                                )}
+                            </strong>
+
+                            -
+                            ${escapeDonationText(
+                                beneficiary.location
+                            )}
+                        </span>
+
+                    </label>
+
+                    <div
+                        id="beneficiary-details-${donationId}-${beneficiary.id}"
+                        style="display:none; margin-bottom:15px;">
+
+                        <label>
+                            Quantity given
+                        </label>
+
+                        <input
+                            type="text"
+                            id="quantity-${donationId}-${beneficiary.id}"
+                            placeholder="Example: 3 packets"
+                            oninput="updateDonationCompletionButton(
+                                ${donationId}
+                            )">
+
+                        <button
+                            type="button"
+                            class="outline-btn"
+                            style="margin-top:8px;"
+                            onclick="openProofUploader(
+                                ${donationId},
+                                ${beneficiary.id}
+                            )">
+
+                            📷 Upload Proof Photo
+
+                        </button>
+
+                        <div
+                            id="proofPreview-${donationId}-${beneficiary.id}"
+                            class="proof-preview">
+
+                            No photo uploaded yet.
+
+                        </div>
+
+                    </div>
                 `
             ).join("");
 
@@ -1104,49 +1172,20 @@ async function openCompletionForm(donationId) {
                     <span>
                         Donation #${donationId}
                     </span>
+
                 </div>
 
                 <label>
-                    Select Beneficiary
+                    Select Beneficiary / Beneficiaries
                 </label>
 
-                <select
-                    id="beneficiary-${donationId}"
-                    required
-                    onchange="updateDonationCompletionButton(
-                    ${donationId})">
+                <p style="font-size:14px;">
+                    You can select multiple beneficiaries
+                    so the donation can be distributed fairly.
+                </p>
 
-                    <option value="">
-                        Select a beneficiary
-                    </option>
-
+                <div>
                     ${beneficiaryOptions}
-                </select>
-
-
-                <label>
-                    Donation Proof Photo
-                </label>
-
-                <button
-                    type="button"
-                    class="outline-btn"
-                    onclick="openProofUploader(
-                        ${donationId}
-                    )">
-
-                    <span
-                        class="material-symbols-outlined">
-                        photo_camera
-                    </span>
-                    Upload Donation Photo
-                </button>
-
-                <div
-                    id="proofPreview-${donationId}"
-                    class="proof-preview">
-
-                    No photo uploaded yet.
                 </div>
 
                 <label>
@@ -1159,18 +1198,22 @@ async function openCompletionForm(donationId) {
                     placeholder="Describe the donation delivery..."
                     required
                     oninput="updateDonationCompletionButton(
-                    ${donationId})">
+                        ${donationId}
+                    )">
                 </textarea>
 
                 <div
                     class="completion-actions">
+
                     <button
                         type="button"
                         class="outline-btn"
                         onclick="closeCompletionForm(
                             ${donationId}
                         )">
+
                         Cancel
+
                     </button>
 
                     <button
@@ -1185,12 +1228,13 @@ async function openCompletionForm(donationId) {
                         Donation Successful
 
                     </button>
+
                 </div>
+
             </div>
             `
         );
 
-        // Scroll to form
         document
             .getElementById(
                 `completionForm-${donationId}`
@@ -1200,14 +1244,17 @@ async function openCompletionForm(donationId) {
                 block: "center"
             });
 
-    } 
+    }
+
     catch (error) {
+
         console.error(
             "Beneficiary loading error:",
             error
         );
 
         if (completeButton) {
+
             completeButton.disabled = false;
             completeButton.style.opacity = "1";
             completeButton.style.cursor = "pointer";
@@ -1220,14 +1267,56 @@ async function openCompletionForm(donationId) {
 }
 
 
+function updateBeneficiaryRows(donationId) {
+
+    const checkboxes =
+        document.querySelectorAll(
+            `.beneficiary-checkbox-${donationId}`
+        );
+
+    checkboxes.forEach(
+        checkbox => {
+
+            const details =
+                document.getElementById(
+                    `beneficiary-details-${donationId}-${checkbox.value}`
+                );
+
+            if (!details) return;
+
+            if (checkbox.checked) {
+
+                details.style.display =
+                    "block";
+
+            }
+            else {
+
+                details.style.display =
+                    "none";
+
+                delete donationProofPhotos[
+                    donationId
+                ][checkbox.value];
+            }
+        }
+    );
+
+    updateDonationCompletionButton(
+        donationId
+    );
+}
+
+
 // ==========================================
 // UPDATE DONATION COMPLETION BUTTON
 function updateDonationCompletionButton(
     donationId
 ) {
-    const beneficiaryElement =
+
+    const submitButton =
         document.getElementById(
-            `beneficiary-${donationId}`
+            `donationSuccessfulBtn-${donationId}`
         );
 
     const notesElement =
@@ -1235,43 +1324,77 @@ function updateDonationCompletionButton(
             `completionNotes-${donationId}`
         );
 
-    const submitButton =
-        document.getElementById(
-            `donationSuccessfulBtn-${donationId}`
-        );
-
     if (
-        !beneficiaryElement ||
-        !notesElement ||
-        !submitButton
+        !submitButton ||
+        !notesElement
     ) {
         return;
     }
 
-    const beneficiary =
-        beneficiaryElement.value.trim();
+    const checkboxes =
+        document.querySelectorAll(
+            `.beneficiary-checkbox-${donationId}:checked`
+        );
 
     const notes =
         notesElement.value.trim();
 
-    const proofPhoto =
-        donationProofPhotos[
-            donationId
-        ];
+    let allReady =
+        checkboxes.length > 0 &&
+        notes.length > 0;
 
-    const ready =
-        beneficiary &&
-        notes &&
-        proofPhoto;
+    checkboxes.forEach(
+        checkbox => {
 
-    submitButton.disabled = !ready;
+            const beneficiaryId =
+                checkbox.value;
 
-    if (ready) {
-        submitButton.style.opacity = "1";
-        submitButton.style.cursor = "pointer";
-    } else {
-        submitButton.style.opacity = "0.6";
-        submitButton.style.cursor = "not-allowed";
+            const quantityElement =
+                document.getElementById(
+                    `quantity-${donationId}-${beneficiaryId}`
+                );
+
+            const quantity =
+                quantityElement
+                    ? quantityElement.value.trim()
+                    : "";
+
+            const proof =
+                donationProofPhotos[
+                    donationId
+                ] &&
+                donationProofPhotos[
+                    donationId
+                ][beneficiaryId];
+
+            if (
+                !quantity ||
+                !proof
+            ) {
+                allReady = false;
+            }
+        }
+    );
+
+    submitButton.disabled =
+        !allReady;
+
+    if (allReady) {
+
+        submitButton.style.opacity =
+            "1";
+
+        submitButton.style.cursor =
+            "pointer";
+
+    }
+    else {
+
+        submitButton.style.opacity =
+            "0.6";
+
+        submitButton.style.cursor =
+            "not-allowed";
     }
 }
 
@@ -1313,45 +1436,105 @@ function closeCompletionForm(
 async function submitDonationCompletion(
     donationId
 ) {
+
     const email =
         localStorage.getItem("email");
 
-    const beneficiary =
-        document.getElementById(
-            `beneficiary-${donationId}`
-        ).value;
-
-    const notes =
+    const notesElement =
         document.getElementById(
             `completionNotes-${donationId}`
-        ).value.trim();
-
-    const proofPhoto =
-        donationProofPhotos[
-            donationId
-        ];
-
-    // ------------------------------
-    // VALIDATION
-    // ------------------------------
-    if (!beneficiary) {
-        alert(
-            "Please select a beneficiary."
         );
+
+    const notes =
+        notesElement
+            ? notesElement.value.trim()
+            : "";
+
+    const selectedCheckboxes =
+        document.querySelectorAll(
+            `.beneficiary-checkbox-${donationId}:checked`
+        );
+
+    if (!selectedCheckboxes.length) {
+
+        alert(
+            "Please select at least one beneficiary."
+        );
+
         return;
     }
 
-    if (!proofPhoto) {
+    if (!notes) {
+
         alert(
-            "Please upload a donation proof photo."
+            "Please enter completion notes."
         );
 
         return;
+    }
+
+    const beneficiaries = [];
+
+    for (
+        const checkbox
+        of selectedCheckboxes
+    ) {
+
+        const beneficiaryId =
+            checkbox.value;
+
+        const quantityElement =
+            document.getElementById(
+                `quantity-${donationId}-${beneficiaryId}`
+            );
+
+        const quantity =
+            quantityElement
+                ? quantityElement.value.trim()
+                : "";
+
+        const proof =
+            donationProofPhotos[
+                donationId
+            ] &&
+            donationProofPhotos[
+                donationId
+            ][beneficiaryId];
+
+        if (!quantity) {
+
+            alert(
+                "Please enter the quantity given to every selected beneficiary."
+            );
+
+            return;
+        }
+
+        if (!proof) {
+
+            alert(
+                "Please upload a proof photo for every selected beneficiary."
+            );
+
+            return;
+        }
+
+        beneficiaries.push({
+
+            beneficiary_id:
+                Number(beneficiaryId),
+
+            quantity_received:
+                quantity,
+
+            proof_photo:
+                proof
+        });
     }
 
     const confirmed =
         confirm(
-            "Are you sure the donation has been successfully delivered?"
+            "Are you sure the donation has been successfully delivered to the selected beneficiaries?"
         );
 
     if (!confirmed) {
@@ -1359,6 +1542,7 @@ async function submitDonationCompletion(
     }
 
     try {
+
         const response =
             await fetch(
                 `${API_BASE_URL}/complete_donation/${donationId}`,
@@ -1372,13 +1556,11 @@ async function submitDonationCompletion(
 
                     body: JSON.stringify({
 
-                        email: email,
+                        email:
+                            email,
 
-                        beneficiary_id:
-                            beneficiary,
-
-                        proof_photo:
-                            proofPhoto,
+                        beneficiaries:
+                            beneficiaries,
 
                         completion_notes:
                             notes
@@ -1390,6 +1572,7 @@ async function submitDonationCompletion(
             await response.json();
 
         if (!response.ok) {
+
             alert(
                 data.message ||
                 "Unable to complete donation."
@@ -1407,15 +1590,17 @@ async function submitDonationCompletion(
         ];
 
         loadAvailableDonations();
-
         loadMyDonations();
-    } 
+
+    }
 
     catch (error) {
+
         console.error(
             "Completion error:",
             error
         );
+
         alert(
             "Unable to connect to the backend."
         );
@@ -1427,19 +1612,27 @@ async function submitDonationCompletion(
 // CLOUDINARY DONATION PROOF UPLOADER
 // SIGNED UPLOAD
 // ==========================================
-async function openProofUploader(donationId) {
+async function openProofUploader(
+    donationId,
+    beneficiaryId
+) {
+
     if (!window.cloudinary) {
+
         alert(
             "Cloudinary upload system is not loaded."
         );
+
         return;
     }
 
     try {
-        const timestamp =
-            Math.floor(Date.now() / 1000);
 
-        // Ask Flask backend for a signed upload
+        const timestamp =
+            Math.floor(
+                Date.now() / 1000
+            );
+
         const signResponse =
             await fetch(
                 `${API_BASE_URL}/api/cloudinary/sign`,
@@ -1452,7 +1645,10 @@ async function openProofUploader(donationId) {
                     },
 
                     body: JSON.stringify({
-                        timestamp: timestamp,
+
+                        timestamp:
+                            timestamp,
+
                         upload_preset:
                             "sparc_donation_proof"
                     })
@@ -1482,6 +1678,7 @@ async function openProofUploader(donationId) {
         const widget =
             cloudinary.createUploadWidget(
                 {
+
                     cloudName:
                         signData.cloud_name,
 
@@ -1496,9 +1693,14 @@ async function openProofUploader(donationId) {
                         "camera"
                     ],
 
-                    multiple: false,
-                    maxFiles: 1,
-                    resourceType: "image",
+                    multiple:
+                        false,
+
+                    maxFiles:
+                        1,
+
+                    resourceType:
+                        "image",
 
                     clientAllowedFormats: [
                         "jpg",
@@ -1507,7 +1709,8 @@ async function openProofUploader(donationId) {
                         "webp"
                     ],
 
-                    maxFileSize: 5000000,
+                    maxFileSize:
+                        5000000,
 
                     folder:
                         "sparc/donation_proofs",
@@ -1519,8 +1722,13 @@ async function openProofUploader(donationId) {
                         signData.timestamp
                 },
 
-                function(error, result) {
+                function(
+                    error,
+                    result
+                ) {
+
                     if (error) {
+
                         console.error(
                             "Cloudinary error:",
                             error
@@ -1541,47 +1749,61 @@ async function openProofUploader(donationId) {
                         const imageUrl =
                             result.info.secure_url;
 
-                        // Store proof URL for this donation
+                        if (
+                            !donationProofPhotos[
+                                donationId
+                            ]
+                        ) {
+
+                            donationProofPhotos[
+                                donationId
+                            ] = {};
+                        }
+
                         donationProofPhotos[
                             donationId
+                        ][
+                            beneficiaryId
                         ] = imageUrl;
 
-                        // Enable Donation Successful
-                        // if all required details are filled
-                        updateDonationCompletionButton(
-                            donationId
-                        );
-
-                        // Show preview
                         const preview =
                             document.getElementById(
-                                `proofPreview-${donationId}`
+                                `proofPreview-${donationId}-${beneficiaryId}`
                             );
 
                         if (preview) {
 
                             preview.innerHTML = `
+
                                 <img
                                     src="${imageUrl}"
                                     alt="Donation proof"
                                     class="proof-image">
 
                                 <p>
-                                    ✓ Photo uploaded successfully
+                                    ✓ Proof photo uploaded
                                 </p>
+
                             `;
                         }
 
+                        updateDonationCompletionButton(
+                            donationId
+                        );
+
                         alert(
-                            "Donation proof photo uploaded successfully!"
+                            "Proof photo uploaded successfully!"
                         );
                     }
                 }
             );
+
         widget.open();
 
-    } 
+    }
+
     catch (error) {
+
         console.error(
             "Cloudinary upload error:",
             error
