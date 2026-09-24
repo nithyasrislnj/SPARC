@@ -354,6 +354,13 @@
         id="assistedOfferControls"
         class="job-role-controls"
         style="display:none;">
+          <div class="control-section-title">
+            <span class="material-symbols-outlined">
+              support_agent
+            </span>
+            Assisted Support
+          </div>
+
           <button
           class="secondary-btn"
           onclick="loadAssistedJobOffers()">
@@ -390,6 +397,56 @@
 
           </button>
         </div>
+
+
+        <!-- ======================================================
+        ADMIN CONTROLS -->
+        <div
+          id="adminControls"
+          class="job-role-controls"
+          style="display:none;">
+          <div class="control-section-title">
+            <span class="material-symbols-outlined">
+              admin_panel_settings
+            </span>
+            Admin Controls
+          </div>
+
+          <button
+          class="secondary-btn"
+          onclick="loadAdminEmploymentOverview()">
+
+            <span class="material-symbols-outlined">
+            monitoring
+            </span>
+            Employment Monitoring
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadActiveLocations()">
+
+            <span class="material-symbols-outlined">
+            location_on
+            </span>
+
+            Active Locations
+
+          </button>
+
+          <button
+          class="secondary-btn"
+          onclick="loadAssistedPayments()">
+
+            <span class="material-symbols-outlined">
+            support_agent
+            </span>
+
+            Assisted Payments
+
+          </button>
+        </div>
+
 
         <!-- ======================================================
         EMPLOYER CONTROLS -->
@@ -431,49 +488,7 @@
 
           </button>
         </div>
-
-
-        <!-- ======================================================
-        ADMIN CONTROLS -->
-        <div
-          id="adminControls"
-          class="job-role-controls"
-          style="display:none;">
-
-          <button
-          class="secondary-btn"
-          onclick="loadAdminEmploymentOverview()">
-
-            <span class="material-symbols-outlined">
-            monitoring
-            </span>
-            Employment Monitoring
-          </button>
-
-          <button
-          class="secondary-btn"
-          onclick="loadActiveLocations()">
-
-            <span class="material-symbols-outlined">
-            location_on
-            </span>
-
-            Active Locations
-
-          </button>
-
-          <button
-          class="secondary-btn"
-          onclick="loadAssistedPayments()">
-
-            <span class="material-symbols-outlined">
-            support_agent
-            </span>
-
-            Assisted Payments
-
-          </button>
-        </div>
+        
 
         <!-- ======================================================
         JOB INFORMATION -->
